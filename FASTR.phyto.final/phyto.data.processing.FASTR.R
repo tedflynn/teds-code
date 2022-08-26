@@ -1,13 +1,14 @@
 ## Extracting FASTR data from 
-## AEU's Yolo Bypass Phyto datasheets
-## 2/3/2022
+## AEU's Yolo Bypass Phyto datasheets and formatting it to make graphs
+## Converting biovolume data into biomass and LCEFA data
+## 2/3/2022 - Current
 
 library("tidyverse");packageVersion("tidyverse")
 library("lubridate");packageVersion("lubridate")
 library("janitor");packageVersion("janitor")
 
 # Set working directory
-setwd("C:/Users/tflynn/Documents/R/FASTR.phyto.redo/yolo.phyto")
+setwd("./FASTR.phyto.final/")
 
 # Set visual theme in ggplot
 theme_set(theme_bw())
@@ -20,23 +21,21 @@ rm(list=ls())
 #phyto.all <- map_dfr(phyto_files, ~read_csv(.x))
 
 ## Save imported data files (takes a while)
-#save(phyto.all, file = "phyto_raw.RData") 
-load("phyto_raw.RData")
+#save(phyto.all, file = "RData/phyto_raw.RData") 
+load("RData/phyto_raw.RData")
 
 # Clean up column names
 phyto <- phyto.all %>%
   clean_names(case = "big_camel")
 
 ## Remove GALD measurements
-phyto[37:69] <- NULL
+phyto <- phyto %>% select(MethodCode:Biovolume10)
 
 ## Remove empty rows
-phyto <- phyto %>% 
-  filter_all(any_vars(!is.na(.)))
+phyto <- phyto %>% filter_all(any_vars(!is.na(.)))
 
 ## Remove weird row with only a single zero in biovolume
-phyto <- phyto %>% 
-  drop_na(MethodCode)
+phyto <- phyto %>% drop_na(MethodCode)
 
 ## Average all 10 biovolume measurements for each taxon
 phyto <- phyto %>%
@@ -44,43 +43,33 @@ phyto <- phyto %>%
   mutate(BV.Avg = mean(c_across(Biovolume1:Biovolume10), na.rm = T))
 
 # Remove Biovolume Columns
-phyto[27:36] <- NULL
+phyto <- phyto %>% select(!(Biovolume1:Biovolume10))
 
-# Remove unneeded columns
-phyto[21:26] <- NULL
-phyto[5:11] <- NULL
-phyto$MethodCode <- NULL
-phyto$BsaTin <- NULL
-phyto$DiatomSoftBody <- NULL
-phyto$Synonym <- NULL
+# Remove other unneeded columns
+phyto <- phyto %>% select(!c("MethodCode","BsaTin","DiatomSoftBody","Synonym"))
+phyto <- phyto %>% select(!(Gald:Shape))
+phyto <- phyto %>% select(!(VolumeReceivedML:NumberOfFieldsCounted))
 
 ## Fix samples with missing times
 ## Just replace with 12:00:00 b/c aren't doing any time-based analyses
-phyto <- phyto %>%
-  replace_na(list(SampleTime = "12:00:00"))
+phyto <- phyto %>% replace_na(list(SampleTime = "12:00:00"))
 
 ## Get dates in the right format
 ## Some are 1/1/14 and others 1/1/2014
-phyto$SampleDate <- parse_date_time(phyto$SampleDate, 
-                                    c("%m/%d/%Y", "%m/%d/%y"))
+phyto$SampleDate <- parse_date_time(phyto$SampleDate, c("%m/%d/%Y", "%m/%d/%y"))
 
 ## Combine date and time column
-phyto <- phyto %>% 
-  unite(DateTime, 
-        c("SampleDate","SampleTime"), 
-        sep = " ") #, remove = FALSE, na.rm = FALSE)
+phyto <- phyto %>% unite(DateTime, c("SampleDate","SampleTime"), sep = " ")
 
 phyto$DateTime <- as_datetime(phyto$DateTime, 
                               tz = "US/Pacific",
                               format = c("%Y-%m-%d %H:%M:%OS"))
 
 ## Check for missing dates
-phyto %>%
-  filter(is.na(DateTime)) ## No missing dates
+phyto %>% filter(is.na(DateTime)) ## No missing dates
 
 ## Correct BSA header
-phyto <- phyto %>%
-  rename("TotalCells" = "NumberOfCellsPerUnit")
+phyto <- phyto %>% rename("TotalCells" = "NumberOfCellsPerUnit")
 
 ## List of stations used for FASTR
 stations <- c("RMB","RCS","RD22","I80","LIS","STTD","BL5","LIB","RYI","RVB")
@@ -90,19 +79,18 @@ phyto$StationCode <- gsub("SHER","SHR",phyto$StationCode)
 phyto$StationCode <- gsub("BL-5","BL5",phyto$StationCode)
 
 ## Print out all station IDs to flag which ones to remove
-all.stations <- sort(unique(phyto$StationCode))
-write(all.stations, file = "station_names.txt")
+#all.stations <- sort(unique(phyto$StationCode))
+#write(all.stations, file = "station_names.txt")
 
 ## Read in station names with flags and merge
-keepers <- read_csv("station_names_flagged.csv")
+keepers <- read_csv("CSVs/station_names_flagged.csv")
 phyto <- left_join(phyto, keepers)
 
 ## Remove data unrelated to project
-phyto <- phyto %>%
-  filter(Flag == "Keep")
+phyto <- phyto %>% filter(Flag == "Keep")
 
 ## Remove flag column
-phyto$Flag <- NULL
+phyto <- phyto %>% select(!(Flag))
 
 ## Confirm station IDs
 unique(phyto$StationCode)
@@ -112,7 +100,7 @@ table(phyto$StationCode)
 phyto$StationCode <- factor(as.character(phyto$StationCode), levels = stations)
 
 ## Import Stations listed as Upstream and Downstream
-region <- read_csv("upstream_downstream_stations.csv")
+region <- read_csv("CSVs/upstream_downstream_stations.csv")
 region <- region %>% 
   rename("Region" = "UpDown") %>%
   rename("StationCode" = "Site")
@@ -126,9 +114,7 @@ region$Region <- factor(region$Region, levels = c("Upstream","Downstream"))
 
 phyto <- phyto %>% 
   mutate(Taxon = case_when(Taxon == 'Chroococcus microscopicus' ~ 'Eucapsis microscopica',
-                           TRUE ~ Taxon))
-
-phyto <- phyto %>% 
+                           TRUE ~ Taxon)) %>%
   mutate(Genus = case_when(Taxon == 'Eucapsis microscopica' ~ 'Eucapsis',
                            TRUE ~ Genus))
 
@@ -137,9 +123,7 @@ phyto <- phyto %>%
 
 phyto <- phyto %>% 
   mutate(Taxon = case_when(Taxon == 'Plagioselmis lacustris' ~ 'Rhodomonas lacustris',
-                           TRUE ~ Taxon))
-
-phyto <- phyto %>% 
+                           TRUE ~ Taxon)) %>%
   mutate(Genus = case_when(Taxon == 'Rhodomonas lacustris' ~ 'Rhodomonas',
                            TRUE ~ Genus))
 
@@ -149,17 +133,14 @@ phyto$Genus <- gsub("cf Chlorella","Chlorella",phyto$Genus)
 sort(unique(phyto$Genus)) ## 153 unique genera
 
 ## Add column for year and month for highlighting data
-phyto <- phyto %>%
-  mutate(Year = year(phyto$DateTime))
-
-phyto <- phyto %>%
-  mutate(Month = month(phyto$DateTime, label = T))
+phyto <- phyto %>% mutate(Year = year(phyto$DateTime))
+phyto <- phyto %>% mutate(Month = month(phyto$DateTime, label = T))
 
 ## Order month in calendar order rather than (default) alphabetical
 phyto$Month = factor(phyto$Month, levels = month.abb)
 
 ## Add higher-level taxonomy names
-taxa <- read_csv("phyto_group_taxonomy.csv")
+taxa <- read_csv("CSVs/phyto_group_taxonomy.csv")
 phyto <- left_join(phyto, taxa)
 
 ## Check for NAs in group
@@ -175,7 +156,7 @@ phyto <- phyto %>%
   relocate(Month, .after = DateTime)
 
 ## Remove columns no longer needed
-phyto$Species <- NULL
+phyto <- phyto %>% select(!(Species))
 
 ## Convert biovolume to biomass using relationships from Menden-Deuer and Lussard
 ## (2000) doi: 10.4319/lo.2000.45.3.0569
@@ -201,16 +182,11 @@ phyto <- phyto %>%
   mutate(BM.ug.per.mL = Biomass.ug.C * Cells.per.mL)
 
 ## Remove columns no longer needed
-phyto$UnitAbundance <- NULL
-phyto$TotalCells <- NULL
-phyto$Factor <- NULL
-phyto$BV.Avg <- NULL
-phyto$Biomass.ug.C <- NULL 
+phyto <- phyto %>% select(DateTime:StationCode,Taxon:Group,Units.per.mL:BM.ug.per.mL)
 
 ## Units for Density (unit, cell, biomass, and biovolume) are in per mL, will convert to per L because
 ## final units of biomass and LCEFA will be per liter. 
-phyto <- phyto %>%
-  mutate(across(8:11, ~ .x * 1000,.keep = "unused"))
+phyto <- phyto %>% mutate(across(8:11, ~ .x * 1000,.keep = "unused"))
 
 ## Rename headers b/c units are now in L
 phyto <- phyto %>% rename("Units.per.L" = "Units.per.mL")
@@ -218,30 +194,24 @@ phyto <- phyto %>% rename("Cells.per.L" = "Cells.per.mL")
 phyto <- phyto %>% rename("BV.um3.per.L" = "BV.um3.per.mL")
 phyto <- phyto %>% rename("BM.ug.per.L" = "BM.ug.per.mL")
 
-## Pivot to long format
-## Summarize biovolume by genus
-phyto.l <- phyto
+################################################################################
+############## Analyze Biovolume Data for Outliers #############################
+################################################################################
 
-phyto.l <- pivot_longer(phyto.l, cols = 8:11, 
-                        names_to = "Type", 
-                        values_to = "Conc")
+## Subset to biovolume data only
+phyto.BV <- phyto %>% select(DateTime:Group,BV.um3.per.L)
 
-## Subset to biovolume data only to analyze for outliers
-phyto.BV <- phyto.l %>%
-  filter(Type == "BV.um3.per.L")
+## Identify outliers to remove
+boxplot(phyto.BV$BV.um3.per.L)
 
-## Identify remove outliers
-boxplot(phyto.BV$Conc)
-
-# Identify 0.1% and 99.9% 
-quartiles <- quantile(phyto.BV$Conc, probs=c(0.001, 0.999), na.rm = TRUE)
+# Identify 0.1% and 99.9% percentiles of the data
+quartiles <- quantile(phyto.BV$BV.um3.per.L, probs=c(0.001, 0.999), na.rm = TRUE)
 
 # List upper cutoff (99.9%)
 cutoff <- quartiles[2]
 
 # Filter dataset to show all taxa above this 99.9% cutoff
-outliers <- phyto.BV %>%
-   filter(Conc > cutoff)
+outliers <- phyto.BV %>% filter(BV.um3.per.L > cutoff)
 
 list(outliers) ## 4 of top 6 are Spirogyra. 
 phyto.BV %>% filter(Genus == "Spirogyra")# Only 5 total samples w/ Spirogyra
@@ -250,15 +220,12 @@ phyto.BV %>% filter(Genus == "Spirogyra")# Only 5 total samples w/ Spirogyra
 # 4/5 are above 99.9% cutoff, 5 is also very very abundant
 # These are benthic algae that clump, more likely to be "bullseye" samples
 # that got a big blob or clumb
-#phyto.BV <- phyto.BV %>% filter(Genus != "Spirogyra")
 phyto <- phyto %>% filter(Genus != "Spirogyra")
 
 ## Remove 2013 data (very limited)
-#phyto.BV <- phyto.BV %>% filter(Year != 2013)
 phyto <- phyto %>% filter(Year != 2013)
 
 rm(phyto.BV)
-rm(phyto.l)
 
 ## Summarize by algal group
 phyto.grp <- phyto %>%
@@ -289,15 +256,21 @@ phyto.grp <- phyto.grp %>%
 # Update with 45 days limit on either end
 ### Update 5/27/22 TF added >= to two of the mutate commands to avoid removing 
 ### samples falling on the PreFlowEnd and PostFlowStart dates. 
-FlowDesignation <- read_csv("FlowDatesDesignations_45days.csv")
+
+## Upload flow dates and categories
+FlowDesignation <- read_csv("CSVs/FlowDatesDesignations_45days.csv")
+
+# Format dates as dates
 FlowDesignation$PreFlowStart <- mdy(FlowDesignation$PreFlowStart)
 FlowDesignation$PreFlowEnd <- mdy(FlowDesignation$PreFlowEnd)
 FlowDesignation$PostFlowStart <- mdy(FlowDesignation$PostFlowStart)
 FlowDesignation$PostFlowEnd <- mdy(FlowDesignation$PostFlowEnd)
 
-FlowDesignation$NetFlowDays <- NULL
+# Remove colum with net flow days
+FlowDesignation <- FlowDesignation %>% select(!(NetFlowDays))
 
-save(FlowDesignation, file = "FlowDesignation.RData")
+# Save file for use in making plots
+save(FlowDesignation, file = "RData/FlowDesignation.RData")
 
 # Merge data from FlowDesignation Table (Water Year Type, Flow days and type)
 # Filter only Pre-During-Post Flow Action Data. 
@@ -334,7 +307,7 @@ phyto.grp <- phyto.grp %>% relocate(Region, .after = StationCode)
 phyto.gen <- phyto.gen %>% relocate(Region, .after = StationCode)
 
 ## Add in Flow Pulse Category Data
-FlowPulseCategory <- read_csv("FlowPulseType.csv")
+FlowPulseCategory <- read_csv("CSVs/FlowPulseType.csv")
 FlowPulseCategory <- FlowPulseCategory %>% rename("FlowPulseCategory" = "FlowPulseType")
 
 ## Add Flow Pulse Category to data frames to be exported
@@ -356,7 +329,7 @@ phyto.gen$StationCode <- factor(as.character(phyto.gen$StationCode), levels = st
 
 ## Separate out data frames by density type and add zeros
 # Biovolume Density + Group
-phyto.grp.BV <- phyto.grp %>% select(1:10,BV.um3.per.L)
+phyto.grp.BV <- phyto.grp %>% select(Year:ActionPhase,BV.um3.per.L)
 
 # Add zeros for taxa that weren't detected
 temp <- pivot_wider(phyto.grp.BV, 
@@ -365,12 +338,12 @@ temp <- pivot_wider(phyto.grp.BV,
                     values_fill = 0)
 
 phyto.grp.BV <- pivot_longer(temp,
-                             cols = 10:last_col(),
+                             cols = Cyanobacteria:last_col(),
                              names_to = "Group",
                              values_to = "BV.um3.per.L")
 
 # Biomass Density + Group
-phyto.grp.BM <- phyto.grp %>% select(1:10,BM.ug.per.L)
+phyto.grp.BM <- phyto.grp %>% select(Year:ActionPhase,BM.ug.per.L)
 
 # Add zeros for taxa that weren't detected
 temp <- pivot_wider(phyto.grp.BM, 
@@ -379,12 +352,12 @@ temp <- pivot_wider(phyto.grp.BM,
                     values_fill = 0)
 
 phyto.grp.BM <- pivot_longer(temp,
-                             cols = 10:last_col(),
+                             cols = Cyanobacteria:last_col(),
                              names_to = "Group",
                              values_to = "BM.ug.per.L")
 
 # LCEFA Density + Group
-phyto.grp.LCEFA <- phyto.grp %>% select(1:10,LCEFA.per.L)
+phyto.grp.LCEFA <- phyto.grp %>% select(Year:ActionPhase,LCEFA.per.L)
 
 # Add zeros for taxa that weren't detected
 temp <- pivot_wider(phyto.grp.LCEFA, 
@@ -393,12 +366,10 @@ temp <- pivot_wider(phyto.grp.LCEFA,
                     values_fill = 0)
 
 #Remove taxa that aren't used for LCEFA calculations
-temp$Ciliates <- NULL
-temp$Other <- NULL
-temp$`Golden Algae` <- NULL
+temp <- temp %>% select(!c("Ciliates","Other","Golden Algae"))
 
 phyto.grp.LCEFA <- pivot_longer(temp,
-                             cols = 10:last_col(),
+                             cols = Cyanobacteria:last_col(),
                              names_to = "Group",
                              values_to = "LCEFA.per.L")
 
@@ -434,12 +405,12 @@ phyto.sum <- phyto.grp %>%
 ## Re-add group data to genus table
 phyto.gen <- left_join(phyto.gen, taxa)
 
-phyto.gen <- phyto.gen %>%
-  relocate(Group, .before = Genus)
+## Rearrange location of Group column
+phyto.gen <- phyto.gen %>% relocate(Group, .before = Genus)
 
 ## Save data files
-save(phyto.sum, file = "phyto.sum.RData")
-save(phyto.gen, file = "phyto.gen.RData")
-save(phyto.grp.BV, file = "phyto.grp.BV.RData")
-save(phyto.grp.BM, file = "phyto.grp.BM.RData")
-save(phyto.grp.LCEFA, file = "phyto.grp.LCEFA.RData")
+save(phyto.sum, file = "RData/phyto.sum.RData")
+save(phyto.gen, file = "RData/phyto.gen.RData")
+save(phyto.grp.BV, file = "RData/phyto.grp.BV.RData")
+save(phyto.grp.BM, file = "RData/phyto.grp.BM.RData")
+save(phyto.grp.LCEFA, file = "RData/phyto.grp.LCEFA.RData")
