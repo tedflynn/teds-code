@@ -9,6 +9,7 @@ library("janitor");packageVersion("janitor")
 
 # Set working directory
 setwd("./FASTR.phyto.final/")
+getwd()
 
 # Set visual theme in ggplot
 theme_set(theme_bw())

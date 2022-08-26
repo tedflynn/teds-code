@@ -7,7 +7,7 @@ library("RColorBrewer");packageVersion("RColorBrewer")
 library("vegan");packageVersion("vegan")
 
 # Set working directory
-setwd("C:/Users/tflynn/Documents/R/FASTR.phyto.redo/")
+setwd("./FASTR.phyto.final/")
 
 # Set visual theme in ggplot
 theme_set(theme_bw())
@@ -16,13 +16,13 @@ theme_set(theme_bw())
 rm(list=ls()) 
 
 ## Load biovolume density data at group and genus level
-load("yolo.phyto/phyto.sum.RData")
-load("yolo.phyto/phyto.gen.RData")
-load("yolo.phyto/phyto.grp.BV.RData")
-load("yolo.phyto/phyto.grp.BM.RData")
-load("yolo.phyto/phyto.grp.LCEFA.RData")
-load("yolo.phyto/phyto.grp.sum.error.RData")
-load("yolo.phyto/FlowDesignation.RData")
+load("RData/phyto.sum.RData")
+load("RData/phyto.gen.RData")
+load("RData/phyto.grp.BV.RData")
+load("RData/phyto.grp.BM.RData")
+load("RData/phyto.grp.LCEFA.RData")
+load("RData/phyto.grp.sum.error.RData")
+load("RData/FlowDesignation.RData")
 
 phyto.gen$Group <- NULL 
 
@@ -41,7 +41,7 @@ FlowDesignation$Date <- as_datetime(FlowDesignation$Date,
 brewer.pal(n=8, name = "Set1")
 
 # Set folder name to output graphs into
-output <- "plots_Aug2022"
+output <- "plots"
 
 ## Create box plots 
 # Plot Upstream and Downstream Total BV by ActionPhase for each year
@@ -52,7 +52,7 @@ fig1 <- ggplot(data=phyto.sum, aes(y= log10(Total.BV.per.L),
 
 fig1 +
   labs(title = "Total Phytoplankton Biovolume by Year",
-       y = bquote(Log[10]~'Total Phyto Biovolume'~(µm^3~L^-1)), 
+       y = bquote(Log[10]~'Total Phyto Biovolume'~(um^3~L^-1)), 
        x = "Sampling Region",
        color = "Pulse Period") +
   facet_wrap(Year ~ ., ncol = 2)  
@@ -129,7 +129,7 @@ fig4 <- ggplot(phyto.grp.BV, aes(x = ActionPhase,
 
 fig4 + 
   labs(x = NULL, 
-       y = bquote('Average Biovolume'~(µm^3~L^-1)), 
+       y = bquote('Average Biovolume'~(um^3~L^-1)), 
        title = paste0("Biovolume of Phytoplankton Groups During Flow Pulses")) + 
   theme(panel.background = element_rect(fill = "white", linetype = 0)) + 
   theme(panel.grid.major.x = element_blank(), panel.grid.minor = element_blank()) +
@@ -173,7 +173,7 @@ for (year in years) {
     theme(panel.background = element_rect(fill = "white", linetype = 0)) + 
     theme(panel.grid.major.x = element_blank(), panel.grid.minor = element_blank()) +
     labs(x = "Pulse Period", 
-         y = bquote('Average Biovolume'~(µm^3~L^-1)), 
+         y = bquote('Average Biovolume'~(um^3~L^-1)), 
          title = paste0("Biovolume of Phytoplankton Groups During Flow Pulses - ",year)) 
   
   biovolume.plot +
@@ -469,7 +469,7 @@ fig12 <- ggplot(phyto.grp.LCEFA, aes(x = ActionPhase,
 
 fig12 + 
   labs(x = NULL, 
-       y = bquote('Average LCEFA'~(µg~L^-1)), 
+       y = bquote('Average LCEFA'~(?g~L^-1)), 
        title = paste0("Estimated Mass of LCEFA for Phytoplankton Groups During Flow Pulses")) + 
   theme(panel.background = element_rect(fill = "white", linetype = 0)) + 
   theme(panel.grid.major.x = element_blank(), panel.grid.minor = element_blank()) +
