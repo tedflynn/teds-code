@@ -6,14 +6,15 @@
 library("Rmisc");packageVersion("Rmisc")
 
 # Set working directory
-setwd("C:/Users/tflynn/Documents/R/FASTR.phyto.redo/")
+setwd("./FASTR.phyto.final/")
+getwd()
 
 # Clean workspace
 rm(list=ls()) 
 
 ## Load total biovolume data for FASTR project
-load("yolo.phyto/phyto.sum.RData")
-load("yolo.phyto/phyto.grp.BV.RData")
+load("RData/phyto.sum.RData")
+load("RData/phyto.grp.BV.RData")
 
 ## Calculate standard error for total phyto BV
 phyto.grp.sum.error <- summarySE(phyto.sum, 
@@ -26,7 +27,7 @@ phyto.grp.error <- summarySE(phyto.grp.BV,
                                  groupvars=c("Year","ActionPhase","Region","Group"))
 
 ## Save RData File
-save(phyto.grp.sum.error, file = "yolo.phyto/phyto.grp.sum.error.RData")
+save(phyto.grp.sum.error, file = "RData/phyto.grp.sum.error.RData")
 
 ## Save as CSV file
-write.csv(phyto.grp.error, file = "phyto.grp.error.csv")
+#write.csv(phyto.grp.error, file = "phyto.grp.error.csv")

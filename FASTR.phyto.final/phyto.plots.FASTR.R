@@ -3,11 +3,13 @@
 ## 2/15/2022
 
 library("tidyverse");packageVersion("tidyverse")
+library("lubridate");packageVersion("lubridate")
 library("RColorBrewer");packageVersion("RColorBrewer")
 library("vegan");packageVersion("vegan")
 
 # Set working directory
 setwd("./FASTR.phyto.final/")
+getwd()
 
 # Set visual theme in ggplot
 theme_set(theme_bw())
