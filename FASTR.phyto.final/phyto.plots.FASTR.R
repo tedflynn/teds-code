@@ -249,6 +249,10 @@ for (year in years) {
   
 }
 
+year <- 2014
+
+stresses <- data.frame(year = years, stress = NA)
+
 #######################################
 ####           NMDS Calcs          ####
 #######################################
@@ -279,6 +283,12 @@ for (year in years) {
     #autotransform = F
   )
   
+  #paste0("phyto.NMDS.",year) <- phyto.NMDS
+
+  #save(phyto.NMDS, file = paste("NMDS", year,".RData"))
+  
+  stresses$stress[which(stresses$year ==year)] <- phyto.NMDS$stress
+
   #look at Shepard plot which shows scatter around the regression between the interpoint distances 
   #in the final configuration (i.e., the distances between each pair of communities) against their 
   #original dissimilarities.
