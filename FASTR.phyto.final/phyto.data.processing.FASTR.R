@@ -6,6 +6,7 @@
 library("tidyverse");packageVersion("tidyverse")
 library("lubridate");packageVersion("lubridate")
 library("janitor");packageVersion("janitor")
+library("vegan");packageVersion("vegan")
 
 # Set working directory
 setwd("./FASTR.phyto.final/")
@@ -409,9 +410,77 @@ phyto.gen <- left_join(phyto.gen, taxa)
 ## Rearrange location of Group column
 phyto.gen <- phyto.gen %>% relocate(Group, .before = Genus)
 
+## Calculate NMDS axes
+## Create Biovolume-only data frame at genus level
+phyto.gen.BV <- phyto.gen %>% select(Year:ActionPhase,BV.um3.per.L)
+
+## Create a wide date frame to feed into vegan
+phyto.gen.grp.BV <- phyto.gen.BV %>% select(Year:Region,Genus:BV.um3.per.L)
+
+years <- unique(phyto.gen.grp.BV$Year) 
+years <- sort(years, decreasing = F, na.last = T)
+
+## Create blank data frame to fill stresses in
+stresses <- data.frame(Year = years, stress = NA)
+ls_dfs <- list()
+
+for (i in 1:length(years)) {
+  genw <- pivot_wider(phyto.gen.grp.BV, 
+                      names_from = "Genus", 
+                      values_from = "BV.um3.per.L",
+                      values_fill = 0)
+  
+  genw <- genw %>% filter(Year == years[i])
+  
+  #look at number of observations per station
+  #table(genw$StationCode)
+  
+  # Calculate the nMDS using vegan 
+  # A good rule of thumb: stress < 0.05 provides an excellent representation in reduced dimensions,
+  # < 0.1 is great, < 0.2 is good/ok, and stress < 0.3 provides a poor representation.
+  phyto.NMDS <- metaMDS(
+    comm = genw[c(10:142)],
+    distance = "bray",
+    k = 3,
+    trymax = 10000
+    #trace = F,
+    #autotransform = F
+  )
+  
+  #paste0("phyto.NMDS.",year) <- phyto.NMDS
+  
+  #save(phyto.NMDS, file = paste("NMDS", year,".RData"))
+  
+  stresses$stress[which(stresses$Year == years[i])] <- phyto.NMDS$stress
+  
+  #look at Shepard plot which shows scatter around the regression between the interpoint distances 
+  #in the final configuration (i.e., the distances between each pair of communities) against their 
+  #original dissimilarities.
+  stressplot(phyto.NMDS)
+  
+  # Using the scores function from vegan to extract the site scores and convert to a data.frame
+  data.scores <- as_tibble(scores(phyto.NMDS, display = "sites"))
+  
+  # Combine metadata with NMDS data scores to plot in ggplot
+  meta <- genw %>% select(1:9)
+  meta <- cbind(meta, data.scores)
+  
+  # Read in years as a character otherwise it shows up as a number and gets displayed as a gradient
+  meta$Year <- as.character(meta$Year)
+  
+  ls_dfs[[i]] <- meta
+  
+}
+
+phyto.gen.NMDS <- do.call(rbind, ls_dfs)
+
+
 ## Save data files
 save(phyto.sum, file = "RData/phyto.sum.RData")
 save(phyto.gen, file = "RData/phyto.gen.RData")
 save(phyto.grp.BV, file = "RData/phyto.grp.BV.RData")
 save(phyto.grp.BM, file = "RData/phyto.grp.BM.RData")
 save(phyto.grp.LCEFA, file = "RData/phyto.grp.LCEFA.RData")
+save(phyto.gen.NMDS, file = "RData/phyto.gen.NMDS.Rdata")
+
+write_csv(stresses, file = "analyses/NMDS_stress.csv")
