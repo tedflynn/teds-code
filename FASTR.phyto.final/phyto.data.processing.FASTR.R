@@ -405,19 +405,18 @@ phyto.sum <- phyto.grp %>%
   ungroup
 
 ## Re-add group data to genus table
-phyto.gen <- left_join(phyto.gen, taxa)
+phyto.grp.gen <- left_join(phyto.gen, taxa)
 
 ## Rearrange location of Group column
-phyto.gen <- phyto.gen %>% relocate(Group, .before = Genus)
+phyto.grp.gen <- phyto.grp.gen %>% relocate(Group, .before = Genus)
 
 ## Calculate NMDS axes
 ## Create Biovolume-only data frame at genus level
 phyto.gen.BV <- phyto.gen %>% select(Year:ActionPhase,BV.um3.per.L)
 
-## Create a wide date frame to feed into vegan
-phyto.gen.grp.BV <- phyto.gen.BV %>% select(Year:Region,Genus:BV.um3.per.L)
+## Generate NMDS data with metaMDS by each year separately
 
-years <- unique(phyto.gen.grp.BV$Year) 
+years <- unique(phyto.gen.BV$Year) 
 years <- sort(years, decreasing = F, na.last = T)
 
 ## Create blank data frame to fill stresses in
@@ -425,7 +424,7 @@ stresses <- data.frame(Year = years, stress = NA)
 ls_dfs <- list()
 
 for (i in 1:length(years)) {
-  genw <- pivot_wider(phyto.gen.grp.BV, 
+  genw <- pivot_wider(phyto.gen.BV, 
                       names_from = "Genus", 
                       values_from = "BV.um3.per.L",
                       values_fill = 0)
@@ -478,6 +477,7 @@ phyto.gen.NMDS <- do.call(rbind, ls_dfs)
 ## Save data files
 save(phyto.sum, file = "RData/phyto.sum.RData")
 save(phyto.gen, file = "RData/phyto.gen.RData")
+save(phyto.grp.gen, file = "RData/phyto.grp.gen.RData")
 save(phyto.grp.BV, file = "RData/phyto.grp.BV.RData")
 save(phyto.grp.BM, file = "RData/phyto.grp.BM.RData")
 save(phyto.grp.LCEFA, file = "RData/phyto.grp.LCEFA.RData")
