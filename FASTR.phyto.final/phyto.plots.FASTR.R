@@ -5,7 +5,6 @@
 library("tidyverse");packageVersion("tidyverse")
 library("lubridate");packageVersion("lubridate")
 library("RColorBrewer");packageVersion("RColorBrewer")
-library("vegan");packageVersion("vegan")
 
 # Set working directory
 setwd("./FASTR.phyto.final/")
@@ -20,24 +19,25 @@ rm(list=ls())
 ## Load biovolume density data at group and genus level
 load("RData/phyto.sum.RData")
 load("RData/phyto.gen.RData")
+load("RData/phyto.gen.NMDS.RData")
 load("RData/phyto.grp.BV.RData")
 load("RData/phyto.grp.BM.RData")
 load("RData/phyto.grp.LCEFA.RData")
 load("RData/phyto.grp.sum.error.RData")
 load("RData/FlowDesignation.RData")
 
-phyto.gen$Group <- NULL 
-
 ## Create Biovolume-only data frame at genus level
-phyto.gen.BV <- phyto.gen %>% select(1:10,BV.um3.per.L)
+phyto.gen.BV <- phyto.gen %>% select(Year:Region,Genus:ActionPhase,BV.um3.per.L)
 
 ## Format Flow Designation data frame for graphing
-FlowDesignation <- pivot_longer(FlowDesignation[1:5], cols = PreFlowStart:PostFlowEnd,
+# Remove Water Year Type and Flow Pulse Type data
+FlowDesignation <- FlowDesignation %>% select(Year:PostFlowEnd)
+FlowDesignation <- pivot_longer(FlowDesignation, 
+                                cols = PreFlowStart:PostFlowEnd,
                                 names_to = "Phase",
                                 values_to = "Date")
 
-FlowDesignation$Date <- as_datetime(FlowDesignation$Date,
-                                        tz = "US/Pacific")
+FlowDesignation$Date <- as_datetime(FlowDesignation$Date,tz = "US/Pacific")
 
 ## Create custom palette
 brewer.pal(n=8, name = "Set1")
@@ -206,13 +206,9 @@ for (year in years) {
 ## Create biovolume plots similar to Jared's
 
 for (year in years) {
-  df_temp <- phyto.grp.BV %>%
-    filter(Year == year)
+  df_temp <- phyto.grp.BV %>% filter(Year == year)
   
-  biovolume.plot <- ggplot(phyto.grp.BV, 
-                           aes(x = StationCode, 
-                               y = BV.um3.per.L, 
-                               fill = Group)) +
+  biovolume.plot <- ggplot(phyto.grp.BV, aes(x = StationCode, y = BV.um3.per.L, fill = Group)) +
     geom_bar(data = subset(phyto.grp.BV, Year == year), 
              position = "stack",  
              width = 0.6, 
@@ -249,206 +245,117 @@ for (year in years) {
   
 }
 
-year <- 2014
+## Create relative abundance plots 
+## Summarize Total Biovolumes to look at relative contributions by Year
+phyto.grp.BV.RA <- phyto.grp.BV %>%
+  group_by(Year, Region, ActionPhase, Group) %>%
+  summarize(Mean.BV.per.L = mean(BV.um3.per.L)) %>%
+  ungroup()
 
-stresses <- data.frame(year = years, stress = NA)
+phyto.grp.BV.RA <- phyto.grp.BV.RA %>%
+  group_by(Year, Region, ActionPhase) %>%
+  mutate(MeanRelAbund = Mean.BV.per.L/sum(Mean.BV.per.L)) %>%
+  ungroup
 
-#######################################
-####           NMDS Calcs          ####
-#######################################
+phyto.grp.BV.RA.plot <- ggplot(phyto.grp.BV.RA, aes(x = ActionPhase, y = MeanRelAbund, fill = Group)) +
+  geom_bar(position = "stack",  
+           width = 0.6, 
+           stat = "summary", 
+           fun = "mean") +
+  theme(panel.background = element_rect(fill = "white", linetype = 0)) + 
+  theme(panel.grid.major.x = element_blank(), panel.grid.minor = element_blank()) +
+  labs(x = "Station", 
+       y = "Relative Biovolume (%)", 
+       title = paste0("Relative Abundance of Phytoplankton During Flow Pulses - ",year)) 
 
-# Convert long data to tabular form for nMDS calcs
-# Sum together duplicate taxa (Desity of certain taxa with divergent sizes are calculated separately 
-# according to Tiffany)
-for (year in years) {
-  genw <- pivot_wider(phyto.gen.BV, 
-                      names_from = "Genus", 
-                      values_from = "BV.um3.per.L",
-                      values_fill = 0)
-  
-  genw <- genw %>% filter(Year == year)
-  
-  #look at number of observations per station
-  table(genw$StationCode)
-  
-  # Calculate the nMDS using vegan 
-  # A good rule of thumb: stress < 0.05 provides an excellent representation in reduced dimensions,
-  # < 0.1 is great, < 0.2 is good/ok, and stress < 0.3 provides a poor representation.
-  phyto.NMDS <- metaMDS(
-    comm = genw[c(10:142)],
-    distance = "bray",
-    k = 3,
-    trymax = 10000
-    #trace = F,
-    #autotransform = F
-  )
-  
-  #paste0("phyto.NMDS.",year) <- phyto.NMDS
-
-  #save(phyto.NMDS, file = paste("NMDS", year,".RData"))
-  
-  stresses$stress[which(stresses$year ==year)] <- phyto.NMDS$stress
-
-  #look at Shepard plot which shows scatter around the regression between the interpoint distances 
-  #in the final configuration (i.e., the distances between each pair of communities) against their 
-  #original dissimilarities.
-  stressplot(phyto.NMDS)
-  
-  # Using the scores function from vegan to extract the site scores and convert to a data.frame
-  data.scores <- as_tibble(scores(phyto.NMDS, display = "sites"))
-  
-  # Combine metadata with NMDS data scores to plot in ggplot
-  meta <- genw %>% select(1:9)
-  meta <- cbind(meta, data.scores)
-  
-  # Read in years as a character otherwise it shows up as a number and gets displayed as a gradient
-  meta$Year <- as.character(meta$Year)
-  
-  # Plot NMDS in ggplot2
-  ggplot(meta, aes(x = NMDS1, y = NMDS2, color = Region)) +
-    geom_point(size = 3) +
-    stat_ellipse() + 
-    labs(title = paste0("NMDS - Biovolume - ",year)) +
-    labs(color = "Region") +
-    theme_bw()
-  
-  ggsave(path = output,
-         filename = paste0("phyto_NMDS_biovolume_",year,".png"), 
-         device = "png",
-         scale=1.0, 
-         units="in",
-         height=3,
-         width=4, 
-         dpi="print")
-}
-
-## Plot NMDS by year and ActionPhase
-for (year in years) {
-  genw <- pivot_wider(phyto.gen.BV, 
-                      names_from = "Genus", 
-                      values_from = "BV.um3.per.L",
-                      values_fill = 0)
-  
-  genw <- genw %>% filter(Year == year)
-  
-  #look at number of observations per station
-  table(genw$StationCode)
-  
-  # Calculate the nMDS using vegan 
-  # A good rule of thumb: stress < 0.05 provides an excellent representation in reduced dimensions,
-  # < 0.1 is great, < 0.2 is good/ok, and stress < 0.3 provides a poor representation.
-  phyto.NMDS <- metaMDS(
-    comm = genw[c(10:142)],
-    distance = "bray",
-    k = 3,
-    trymax = 10
-    #trace = F,
-    #autotransform = F
-  )
-  
-  #look at Shepard plot which shows scatter around the regression between the interpoint distances 
-  #in the final configuration (i.e., the distances between each pair of communities) against their 
-  #original dissimilarities.
-  stressplot(phyto.NMDS)
-  
-  # Using the scores function from vegan to extract the site scores and convert to a data.frame
-  data.scores <- as_tibble(scores(phyto.NMDS, display = "sites"))
-  
-  # Combine metadata with NMDS data scores to plot in ggplot
-  meta <- genw %>% select(1:9)
-  meta <- cbind(meta, data.scores)
-  
-  # Read in years as a character otherwise it shows up as a number and gets displayed as a gradient
-  meta$Year <- as.character(meta$Year)
-  
-  # Plot NMDS in ggplot2
-  ggplot(meta, aes(x = NMDS1, y = NMDS2, color = ActionPhase, shape = ActionPhase)) +
-    geom_point(size = 3) +
-    stat_ellipse() + 
-    labs(title = paste0("NMDS - Biovolume - ",year)) +
-    facet_wrap(Year ~ ., ncol = 2) +
-    theme_bw()
-  
-  ggsave(path = output,
-         filename = paste0("phyto_NMDS_biovolume_by_AP_",year,".png"), 
-         device = "png",
-         scale=1.0, 
-         units="in",
-         height=3,
-         width=4, 
-         dpi="print")
-}
-
-## Plot NMDS of all years by Region
-genw <- pivot_wider(phyto.gen.BV, 
-                    names_from = "Genus", 
-                    values_from = "BV.um3.per.L",
-                    values_fill = 0)
-
-#look at number of observations per station
-table(genw$StationCode)
-
-# Calculate the nMDS using vegan 
-# A good rule of thumb: stress < 0.05 provides an excellent representation in reduced dimensions,
-# < 0.1 is great, < 0.2 is good/ok, and stress < 0.3 provides a poor representation.
-phyto.NMDS <- metaMDS(
-  comm = genw[c(10:142)],
-  distance = "bray",
-  k = 3,
-  trymax = 10
-  #trace = F,
-  #autotransform = F
-)
-
-#look at Shepard plot which shows scatter around the regression between the interpoint distances 
-#in the final configuration (i.e., the distances between each pair of communities) against their 
-#original dissimilarities.
-stressplot(phyto.NMDS)
-
-# Using the scores function from vegan to extract the site scores and convert to a data.frame
-data.scores <- as_tibble(scores(phyto.NMDS, display = "sites"))
-
-# Combine metadata with NMDS data scores to plot in ggplot
-meta <- genw %>% select(1:9)
-meta <- cbind(meta, data.scores)
-
-# Read in years as a character otherwise it shows up as a number and gets displayed as a gradient
-meta$Year <- as.character(meta$Year)
-
-# Plot NMDS in ggplot2
-ggplot(meta, aes(x = NMDS1, y = NMDS2, color = Region, shape = Region)) +
-  geom_point(size = 3) +
-  stat_ellipse() + 
-  labs(title = "NMDS - Biovolume - All") +
-  facet_wrap(ActionPhase ~ ., ncol = 1) +
-  theme_bw()
+phyto.grp.BV.RA.plot +
+  scale_fill_manual(values = c("#E41A1C",
+                               "#377EB8",
+                               "#4DAF4A",
+                               "#984EA3",
+                               "#FF7F00",
+                               "#FFFF33",
+                               "#A65628",
+                               "#F781BF")) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.7)) +
+  facet_grid(Region ~ Year)
 
 ggsave(path = output,
-       filename = paste0("phyto_NMDS_biovolume_all_by_AP_and Region.png"), 
+       filename = paste0("phyto_BV_relative_abund_",year,".png"), 
        device = "png",
        scale=1.0, 
        units="in",
-       height=8,
-       width=5, 
+       height=3.5,
+       width=5.5, 
        dpi="print")
 
-## Compare Cyclotella upstream and downstream
-phyto.gen.BV.Cyc <- phyto.gen.BV %>% filter(Genus == "Cyclotella")
+## Make Diatom abundance jitter plots for each year
 
-cyc.plot <- ggplot(phyto.gen.BV.Cyc, aes(x = Region, 
-                                         y = log10(BV.um3.per.L+1))) +
-  geom_jitter()
+## Add diatom "Type" Column for plotting to highlight three abundant taxa
+phyto.dia.BV <- phyto.gen.BV %>%
+  mutate(Type = case_when(Genus == 'Aulacoseira' ~ 'Aulacoseira',
+                          Genus == 'Cyclotella' ~ 'Cyclotella',
+                          Genus == 'Ulnaria' ~ 'Ulnaria',
+                          TRUE ~ 'Other'))
+
+# Set group display order
+type.order <- c("Aulacoseira","Cyclotella","Ulnaria","Other")
+phyto.dia.BV$Type <- factor(as.character(phyto.dia.BV$Type), levels =  type.order)
+
+for (year in years) {
+  #df_temp <- phyto.grp.BV %>% filter(Year == year)
+  
+  df_temp <- phyto.dia.BV %>% 
+    filter(Year==year) %>%
+    filter(Group == "Diatoms")
+  
+  diatom.plot <- ggplot(df_temp, aes(x = StationCode, y = log10(BV.um3.per.L), color = Type)) +
+    geom_jitter(width = 0.1, size = 2) +
+    theme(panel.background = element_rect(fill = "white", linetype = 0)) + 
+    theme(panel.grid.major.x = element_blank(), panel.grid.minor = element_blank()) +
+    labs(x = "Station", 
+         y = "Biovolume (um^3 per mL)", 
+         title = paste0("Diatom Biovolume During Flow Pulses - ",year)) 
+  
+  diatom.plot +
+    scale_color_manual(values = c("#E41A1C",
+                                 "#377EB8",
+                                 "#4DAF4A",
+                                 "#984EA3",
+                                 "#FF7F00",
+                                 "#FFFF33",
+                                 "#A65628",
+                                 "#F781BF")) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.7)) +
+    facet_wrap(ActionPhase ~ ., ncol = 1, dir = "h")
+  
+  ggsave(path = output,
+         filename = paste0("diatom_BV_by_station_and_Region_log10_",year,".png"), 
+         device = "png",
+         scale=1.0, 
+         units="in",
+         height=3.5,
+         width=5.5, 
+         dpi="print")
+  
+  rm(df_temp)
+  
+}
+
+## Compare Cyclotella upstream and downstream
+cyc.plot <- ggplot(phyto.gen.BV, 
+                   aes(x = Region, y = log10(BV.um3.per.L+1))) +
+  geom_jitter(data = subset(phyto.gen.BV, Genus == "Cyclotella"),
+              width = 0.1)
 
 cyc.plot +
   facet_wrap(Year ~ ., ncol = 2)
 
 # Time-series plots of Aulacoseira sp. at each station
 ## Aulacoseira was found in 2012 and 2016 blooms
-phyto.gen.BV.2016 <- phyto.gen.BV %>% filter(phyto.gen.BV$Year==2016)
-
-Aul <- ggplot(data = phyto.gen.BV.2016, aes(x = DateTime, y = BV.um3.per.L, color = Genus)) +
-  geom_point(data = subset(phyto.gen.BV.2016, Genus == "Aulacoseira")) +
-  geom_point(data = subset(phyto.gen.BV.2016, Genus == "Eucapsis")) +
+Aul <- ggplot(data = phyto.gen.BV, aes(x = DateTime, y = BV.um3.per.L, color = Genus)) +
+  geom_point(data = subset(phyto.gen.BV, Genus == "Aulacoseira" & Year == 2016)) +
+  geom_point(data = subset(phyto.gen.BV, Genus == "Eucapsis" & Year == 2016)) +
   annotate("rect", fill = "gray", alpha = 0.5,
            xmin = as.POSIXct("2016-07-12 17:00:00"), xmax = as.POSIXct("2016-08-01 17:00:00"),
            ymin = -Inf, ymax = Inf)
@@ -467,6 +374,54 @@ ggsave(path = output,
        height=4,
        width=7.5, 
        dpi="print")
+
+#######################################
+####           NMDS Plots          ####
+#######################################
+
+## Create biovolume NMDS plots for each year by Region
+NMDS.Region.plot <- ggplot(phyto.gen.NMDS, aes(x = NMDS1, y = NMDS2, color = Region)) +
+  geom_point(size = 3) +
+  stat_ellipse() + 
+  labs(title = "Phytoplankton Community Composition") +
+  labs(color = "Region") +
+  theme_bw()
+
+NMDS.Region.plot +
+  facet_wrap(Year ~ ., ncol = 3, dir = "h")
+
+ggsave(path = output,
+       filename = paste0("phyto_NMDS_biovolume_by_region.png"), 
+       device = "png",
+       scale=1.0, 
+       units="in",
+       height=3,
+       width=6.5, 
+       dpi="print")
+
+## Create biovolume NMDS plots for each year by Region
+
+# Plot NMDS in ggplot2
+
+NMDS.AP.plot <- ggplot(phyto.gen.NMDS, aes(x = NMDS1, y = NMDS2, color = ActionPhase)) +
+  geom_point(size = 3) +
+  stat_ellipse() + 
+  labs(title = "Phytoplankton Community Composition") +
+  labs(color = "Region") +
+  theme_bw()
+
+NMDS.AP.plot +
+  facet_wrap(Year ~ ., ncol = 3, dir = "h")
+
+ggsave(path = output,
+       filename = paste0("phyto_NMDS_biovolume_by_AP.png"), 
+       device = "png",
+       scale=1.0, 
+       units="in",
+       height=3,
+       width=6.5, 
+       dpi="print")
+
 
 ## Create stacked bar chart for yearly LCEFA abundance by Action Phase
 ## and Upstream/Downstream
@@ -495,40 +450,6 @@ fig12 +
 
 ggsave(path = output,
        filename = paste0("fig12_phyto_group_LCEFA_by_year.png"), 
-       device = "png",
-       scale=1.0, 
-       units="in",
-       height=5,
-       width=7.5, 
-       dpi="print")
-
-## Make Diatom-specific plots for 2016
-phyto.dia.BV.2016 <- phyto.gen.BV %>% 
-  filter(Year==2016) %>%
-  filter(Group == "Diatoms")
-
-phyto.dia.BV.2016 <- phyto.dia.BV.2016 %>%
-  mutate(Type = case_when(Genus == 'Aulacoseira' ~ 'Aulacoseira',
-                          Genus == 'Cyclotella' ~ 'Cyclotella',
-                          Genus == 'Ulnaria' ~ 'Ulnaria',
-                          TRUE ~ 'Other'))
-
-## Set group display order
-type.order <- c("Aulacoseira","Cyclotella","Ulnaria","Other")
-phyto.dia.BV.2016$Type <- factor(as.character(phyto.dia.BV.2016$Type), levels =  type.order)
-
-Dia.2016 <- ggplot(data = phyto.dia.BV.2016, aes(x = StationCode, y = BV.um3.per.L, color = Type)) +
-  geom_jitter(width = 0.1, size = 2) +
-  scale_color_brewer(palette = "Set1")
-
-Dia.2016 + 
-  labs (x = "Date", y = "Biovolume (um^3 per mL)", title = "Biovolume of Diatoms - 2016") +
-  theme(panel.background = element_rect(fill = "white", linetype = 0)) + 
-  theme(panel.grid.major.x = element_blank(), panel.grid.minor = element_blank()) +
-  facet_wrap(ActionPhase ~ ., ncol = 1) 
-
-ggsave(path = output,
-       filename = "jitter_plot_diatoms_2016.png", 
        device = "png",
        scale=1.0, 
        units="in",
