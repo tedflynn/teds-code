@@ -353,12 +353,13 @@ ggsave(path = output,
        dpi="print")
 
 ## Make Diatom abundance jitter plots for each year
-
+years <- unique(phyto.grp.gen.BV$Year) 
+years <- sort(years, decreasing = F, na.last = T)
 
 for (year in years) {
   #df_temp <- phyto.grp.BV %>% filter(Year == year)
   
-  df_temp <- phyto.dia.BV %>% 
+  df_temp <- phyto.grp.gen.BV %>% 
     filter(Year==year) %>%
     filter(Group == "Diatoms")
   

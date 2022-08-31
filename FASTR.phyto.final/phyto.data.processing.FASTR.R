@@ -452,11 +452,8 @@ phyto.grp.gen.BV.RA.tot <- phyto.grp.gen.BV.RA %>%
   summarize(MeanRelAbund = sum(MeanRelAbund)) %>%
   ungroup()
 
-
-
-
-
-
+## Create cross-walk table for what taxa are lumped into the Other category
+phyto.types <- phyto.grp.gen.BV.RA %>% select(Genus, Type)
 
 ## Calculate NMDS axes
 ## Create Biovolume-only data frame at genus level
@@ -531,5 +528,6 @@ save(phyto.grp.BM, file = "RData/phyto.grp.BM.RData")
 save(phyto.grp.LCEFA, file = "RData/phyto.grp.LCEFA.RData")
 save(phyto.gen.NMDS, file = "RData/phyto.gen.NMDS.Rdata")
 save(phyto.grp.gen.BV.RA.tot, file = "RData/phyto.grp.gen.BV.RA.tot.Rdata")
+save(phyto.types, file = "RData/phyto.types")
 
 write_csv(stresses, file = "analyses/NMDS_stress.csv")
