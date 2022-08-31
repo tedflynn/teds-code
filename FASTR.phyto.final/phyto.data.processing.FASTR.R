@@ -404,11 +404,59 @@ phyto.sum <- phyto.grp %>%
   rename("Total.LCEFA.per.L" = "LCEFA.per.L") %>%
   ungroup
 
+## Add zeros to genus data frame
+temp <- phyto.gen %>% select(Year:ActionPhase,BV.um3.per.L)
+
+temp <- pivot_wider(temp, 
+                    names_from = "Genus", 
+                    values_from = "BV.um3.per.L",
+                    values_fill = 0)
+
+phyto.grp.gen.BV <- pivot_longer(temp,
+                                 cols = Chlorella:last_col(),
+                                 names_to = "Genus",
+                                 values_to = "BV.um3.per.L")
+
 ## Re-add group data to genus table
-phyto.grp.gen <- left_join(phyto.gen, taxa)
+phyto.grp.gen.BV <- left_join(phyto.grp.gen.BV, taxa)
 
 ## Rearrange location of Group column
-phyto.grp.gen <- phyto.grp.gen %>% relocate(Group, .before = Genus)
+phyto.grp.gen.BV <- phyto.grp.gen.BV %>% relocate(Group, .before = Genus)
+
+## Calculate relative abundance of biovolume by group
+phyto.grp.BV.RA <- phyto.grp.BV %>%
+  group_by(Year, Region, ActionPhase, Group) %>%
+  summarize(Mean.BV.per.L = mean(BV.um3.per.L)) %>%
+  ungroup()
+
+phyto.grp.BV.RA <- phyto.grp.BV.RA %>%
+  group_by(Year, Region, ActionPhase) %>%
+  mutate(MeanRelAbund = Mean.BV.per.L/sum(Mean.BV.per.L)) %>%
+  ungroup
+
+## Calculate relative abundance of each genus within a group
+phyto.grp.gen.BV.RA <- phyto.grp.gen.BV %>%
+  group_by(Group, Genus) %>%
+  summarize(Mean.BV.per.L = mean(BV.um3.per.L)) %>%
+  mutate(MeanRelAbund = Mean.BV.per.L/sum(Mean.BV.per.L)) %>%
+  ungroup()
+
+# Highlight most abundant genera
+phyto.grp.gen.BV.RA <- phyto.grp.gen.BV.RA %>%
+  mutate(Type = case_when(MeanRelAbund > 0.05 ~ Genus,
+                          TRUE ~ 'Other'))
+
+# lump together all "other" taxa
+phyto.grp.gen.BV.RA.tot <- phyto.grp.gen.BV.RA %>%
+  group_by(Group, Type) %>%
+  summarize(MeanRelAbund = sum(MeanRelAbund)) %>%
+  ungroup()
+
+
+
+
+
+
 
 ## Calculate NMDS axes
 ## Create Biovolume-only data frame at genus level
@@ -477,10 +525,11 @@ phyto.gen.NMDS <- do.call(rbind, ls_dfs)
 ## Save data files
 save(phyto.sum, file = "RData/phyto.sum.RData")
 save(phyto.gen, file = "RData/phyto.gen.RData")
-save(phyto.grp.gen, file = "RData/phyto.grp.gen.RData")
+save(phyto.grp.gen.BV, file = "RData/phyto.grp.gen.BV.RData")
 save(phyto.grp.BV, file = "RData/phyto.grp.BV.RData")
 save(phyto.grp.BM, file = "RData/phyto.grp.BM.RData")
 save(phyto.grp.LCEFA, file = "RData/phyto.grp.LCEFA.RData")
 save(phyto.gen.NMDS, file = "RData/phyto.gen.NMDS.Rdata")
+save(phyto.grp.gen.BV.RA.tot, file = "RData/phyto.grp.gen.BV.RA.tot.Rdata")
 
 write_csv(stresses, file = "analyses/NMDS_stress.csv")

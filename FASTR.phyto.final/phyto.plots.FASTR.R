@@ -20,11 +20,13 @@ rm(list=ls())
 load("RData/phyto.sum.RData")
 load("RData/phyto.gen.RData")
 load("RData/phyto.gen.NMDS.RData")
+load("RData/phyto.grp.gen.BV.RData")
 load("RData/phyto.grp.BV.RData")
 load("RData/phyto.grp.BM.RData")
 load("RData/phyto.grp.LCEFA.RData")
 load("RData/phyto.grp.sum.error.RData")
 load("RData/FlowDesignation.RData")
+load("RData/phyto.grp.gen.BV.RA.tot.Rdata")
 
 ## Create Biovolume-only data frame at genus level
 phyto.gen.BV <- phyto.gen %>% select(Year:Region,Genus:ActionPhase,BV.um3.per.L)
@@ -44,6 +46,77 @@ brewer.pal(n=8, name = "Set1")
 
 # Set folder name to output graphs into
 output <- "plots"
+
+## Create pie chart showing overall distribution of taxa
+## Plot general relative abundance for all data
+phyto.RA <- phyto.grp.BV %>%
+  group_by(Group) %>%
+  summarize(Mean.BV.per.L = mean(BV.um3.per.L)) %>%
+  mutate(MeanRelAbund = Mean.BV.per.L/sum(Mean.BV.per.L)) %>%
+  ungroup()
+
+# Set group display order
+phyto.RA <- phyto.RA %>% 
+  arrange(desc(MeanRelAbund)) %>%
+  mutate(Group = factor(Group, levels = Group))
+
+#type.order <- c("Aulacoseira","Cyclotella","Ulnaria","Other")
+#phyto.dia.BV$Type <- factor(as.character(phyto.dia.BV$Type), levels =  type.order)
+
+phyto.BV.RA.pie <- ggplot(phyto.RA, aes(x = "", y = MeanRelAbund, fill = Group)) +
+  geom_bar(stat="identity", width=1, color = "white") +
+  coord_polar("y", start=0) +
+  theme_void()
+
+phyto.BV.RA.pie 
+
+ggsave(path = output,
+       filename = "phyto_BV_RA_pie.pdf", 
+       device = "pdf",
+       scale=1.0, 
+       units="in",
+       height=3.5,
+       width=3, 
+       dpi="print")
+
+## Create relative abundance plots as individual bar plots to export to Illustrator
+groups <- unique(phyto.grp.gen.BV.RA.tot$Group) 
+
+for (group in groups) {
+  df_temp <- phyto.grp.gen.BV.RA.tot %>%
+    filter(Group == group)
+  
+  RA.plot <- ggplot(df_temp, 
+                    aes(x = Group, 
+                        y = MeanRelAbund, 
+                        fill = Type)) +
+    geom_bar(data = df_temp, 
+             position = "stack",  
+             width = 1, 
+             stat = "summary", 
+             fun = "mean") +
+    theme(panel.background = element_rect(fill = "white", linetype = 0)) + 
+    theme(panel.grid.major.x = element_blank(), panel.grid.minor = element_blank()) +
+    labs(x = "Group", 
+         y = "Relative Abundance (%)") 
+  
+  RA.plot 
+  
+  ggsave(path = output,
+         filename = paste0("phyto_RA_",group,".pdf"), 
+         device = "pdf",
+         scale=1.0, 
+         units="in",
+         height=3.5,
+         width=3, 
+         dpi="print")
+  
+  rm(df_temp)
+  
+}
+
+
+
 
 ## Create box plots 
 # Plot Upstream and Downstream Total BV by ActionPhase for each year
@@ -247,16 +320,6 @@ for (year in years) {
 
 ## Create relative abundance plots 
 ## Summarize Total Biovolumes to look at relative contributions by Year
-phyto.grp.BV.RA <- phyto.grp.BV %>%
-  group_by(Year, Region, ActionPhase, Group) %>%
-  summarize(Mean.BV.per.L = mean(BV.um3.per.L)) %>%
-  ungroup()
-
-phyto.grp.BV.RA <- phyto.grp.BV.RA %>%
-  group_by(Year, Region, ActionPhase) %>%
-  mutate(MeanRelAbund = Mean.BV.per.L/sum(Mean.BV.per.L)) %>%
-  ungroup
-
 phyto.grp.BV.RA.plot <- ggplot(phyto.grp.BV.RA, aes(x = ActionPhase, y = MeanRelAbund, fill = Group)) +
   geom_bar(position = "stack",  
            width = 0.6, 
@@ -266,7 +329,7 @@ phyto.grp.BV.RA.plot <- ggplot(phyto.grp.BV.RA, aes(x = ActionPhase, y = MeanRel
   theme(panel.grid.major.x = element_blank(), panel.grid.minor = element_blank()) +
   labs(x = "Station", 
        y = "Relative Biovolume (%)", 
-       title = paste0("Relative Abundance of Phytoplankton During Flow Pulses - ",year)) 
+       title = "Relative Abundance of Phytoplankton During Flow Pulses") 
 
 phyto.grp.BV.RA.plot +
   scale_fill_manual(values = c("#E41A1C",
@@ -281,7 +344,7 @@ phyto.grp.BV.RA.plot +
   facet_grid(Region ~ Year)
 
 ggsave(path = output,
-       filename = paste0("phyto_BV_relative_abund_",year,".png"), 
+       filename = "phyto_BV_relative_abund.png", 
        device = "png",
        scale=1.0, 
        units="in",
@@ -291,16 +354,6 @@ ggsave(path = output,
 
 ## Make Diatom abundance jitter plots for each year
 
-## Add diatom "Type" Column for plotting to highlight three abundant taxa
-phyto.dia.BV <- phyto.gen.BV %>%
-  mutate(Type = case_when(Genus == 'Aulacoseira' ~ 'Aulacoseira',
-                          Genus == 'Cyclotella' ~ 'Cyclotella',
-                          Genus == 'Ulnaria' ~ 'Ulnaria',
-                          TRUE ~ 'Other'))
-
-# Set group display order
-type.order <- c("Aulacoseira","Cyclotella","Ulnaria","Other")
-phyto.dia.BV$Type <- factor(as.character(phyto.dia.BV$Type), levels =  type.order)
 
 for (year in years) {
   #df_temp <- phyto.grp.BV %>% filter(Year == year)
