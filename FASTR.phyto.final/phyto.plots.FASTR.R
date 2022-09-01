@@ -27,6 +27,7 @@ load("RData/phyto.grp.LCEFA.RData")
 load("RData/phyto.grp.sum.error.RData")
 load("RData/FlowDesignation.RData")
 load("RData/phyto.grp.gen.BV.RA.tot.Rdata")
+load("RData/phyto.types")
 
 ## Create Biovolume-only data frame at genus level
 phyto.gen.BV <- phyto.gen %>% select(Year:Region,Genus:ActionPhase,BV.um3.per.L)
@@ -103,8 +104,8 @@ for (group in groups) {
   RA.plot 
   
   ggsave(path = output,
-         filename = paste0("phyto_RA_",group,".pdf"), 
-         device = "pdf",
+         filename = paste0("phyto_RA_",group,".png"), 
+         device = "png",
          scale=1.0, 
          units="in",
          height=3.5,
@@ -320,6 +321,7 @@ for (year in years) {
 
 ## Create relative abundance plots 
 ## Summarize Total Biovolumes to look at relative contributions by Year
+
 phyto.grp.BV.RA.plot <- ggplot(phyto.grp.BV.RA, aes(x = ActionPhase, y = MeanRelAbund, fill = Group)) +
   geom_bar(position = "stack",  
            width = 0.6, 
@@ -352,44 +354,39 @@ ggsave(path = output,
        width=5.5, 
        dpi="print")
 
-## Make Diatom abundance jitter plots for each year
+## Make individual abundance jitter plots for each year
 years <- unique(phyto.grp.gen.BV$Year) 
 years <- sort(years, decreasing = F, na.last = T)
 
+phyto.grp.gen.BV <- left_join(phyto.grp.gen.BV, phyto.types)
+
 for (year in years) {
-  #df_temp <- phyto.grp.BV %>% filter(Year == year)
-  
+
   df_temp <- phyto.grp.gen.BV %>% 
     filter(Year==year) %>%
-    filter(Group == "Diatoms")
+    filter(Group == "Dinoflagellates")
   
-  diatom.plot <- ggplot(df_temp, aes(x = StationCode, y = log10(BV.um3.per.L), color = Type)) +
-    geom_jitter(width = 0.1, size = 2) +
+  jitter.plot <- ggplot(df_temp, aes(x = StationCode, y = BV.um3.per.L, color = Type, shape = Type)) +
+    geom_point(width = 0.1, size = 2) +
     theme(panel.background = element_rect(fill = "white", linetype = 0)) + 
     theme(panel.grid.major.x = element_blank(), panel.grid.minor = element_blank()) +
     labs(x = "Station", 
-         y = "Biovolume (um^3 per mL)", 
-         title = paste0("Diatom Biovolume During Flow Pulses - ",year)) 
+         y = "Biovolume (um^3 per L)", 
+         title = paste0("Dinoflagellate Biovolume During Flow Pulses - ",year)) 
+    #ylim(c(0,2e10))
   
-  diatom.plot +
-    scale_color_manual(values = c("#E41A1C",
-                                 "#377EB8",
-                                 "#4DAF4A",
-                                 "#984EA3",
-                                 "#FF7F00",
-                                 "#FFFF33",
-                                 "#A65628",
-                                 "#F781BF")) +
+  jitter.plot +
+    scale_color_brewer(palette = "Dark2") +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.7)) +
     facet_wrap(ActionPhase ~ ., ncol = 1, dir = "h")
   
   ggsave(path = output,
-         filename = paste0("diatom_BV_by_station_and_Region_log10_",year,".png"), 
+         filename = paste0("jitter_Dinoflagellates_BV_by_station_and_Region_",year,".png"), 
          device = "png",
          scale=1.0, 
          units="in",
          height=3.5,
-         width=5.5, 
+         width=6.5, 
          dpi="print")
   
   rm(df_temp)
@@ -400,10 +397,22 @@ for (year in years) {
 cyc.plot <- ggplot(phyto.gen.BV, 
                    aes(x = Region, y = log10(BV.um3.per.L+1))) +
   geom_jitter(data = subset(phyto.gen.BV, Genus == "Cyclotella"),
-              width = 0.1)
+              width = 0.1) +
+  geom_boxplot(data = subset(phyto.gen.BV, Genus == "Cyclotella"),
+              width = 0.1,
+              outlier.shape = NA)
 
 cyc.plot +
-  facet_wrap(Year ~ ., ncol = 2)
+  facet_wrap(Year ~ ., ncol = 3)
+
+ggsave(path = output,
+       filename = paste0("cyclotella_abundance_plot.png"), 
+       device = "png",
+       scale=1.0, 
+       units="in",
+       height=3.5,
+       width=6.5, 
+       dpi="print")
 
 # Time-series plots of Aulacoseira sp. at each station
 ## Aulacoseira was found in 2012 and 2016 blooms
