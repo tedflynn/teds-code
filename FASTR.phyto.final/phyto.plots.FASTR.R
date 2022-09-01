@@ -48,6 +48,25 @@ brewer.pal(n=8, name = "Set1")
 # Set folder name to output graphs into
 output <- "plots"
 
+Aul <- phyto.gen.BV %>% 
+  #filter(Year==2016) %>%
+  filter(Genus == "Aulacoseira")
+
+Aul$Year <- as.factor(Aul$Year)
+
+x <- ggplot(Aul, aes(x = Year, y = BV.um3.per.L, color = Year)) +
+  geom_jitter(width = 0.1) +
+  scale_color_brewer(palette = "Set1")
+
+x 
+#facet_wrap(StationCode ~ .)
+
+y <- ggplot(Aul, aes(x = Month, y = log10(BV.Density+1), color = StationCode)) +
+  geom_jitter(width = 0.1) 
+#scale_color_brewer(palette = "Set1")
+
+y
+
 ## Create pie chart showing overall distribution of taxa
 ## Plot general relative abundance for all data
 phyto.RA <- phyto.grp.BV %>%
