@@ -40,9 +40,7 @@ phyto <- phyto %>% filter_all(any_vars(!is.na(.)))
 phyto <- phyto %>% drop_na(MethodCode)
 
 ## Average all 10 biovolume measurements for each taxon
-phyto <- phyto %>%
-  rowwise() %>%
-  mutate(BV.Avg = mean(c_across(Biovolume1:Biovolume10), na.rm = T))
+phyto <- phyto %>% rowwise() %>% mutate(BV.Avg = mean(c_across(Biovolume1:Biovolume10), na.rm = T))
 
 # Remove Biovolume Columns
 phyto <- phyto %>% select(!(Biovolume1:Biovolume10))
