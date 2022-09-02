@@ -266,7 +266,7 @@ FlowDesignation$PreFlowEnd <- mdy(FlowDesignation$PreFlowEnd)
 FlowDesignation$PostFlowStart <- mdy(FlowDesignation$PostFlowStart)
 FlowDesignation$PostFlowEnd <- mdy(FlowDesignation$PostFlowEnd)
 
-# Remove colum with net flow days
+# Remove column with net flow days
 FlowDesignation <- FlowDesignation %>% select(!(NetFlowDays))
 
 # Save file for use in making plots

@@ -18,6 +18,7 @@ rm(list=ls())
 
 ## Load biovolume density data at group and genus level
 load("RData/phyto.sum.RData")
+load("RData/phyto_gen_EMP.RData")
 load("RData/phyto.gen.RData")
 load("RData/phyto.gen.NMDS.RData")
 load("RData/phyto.grp.gen.BV.RData")
@@ -32,9 +33,120 @@ load("RData/phyto.types")
 ## Create Biovolume-only data frame at genus level
 phyto.gen.BV <- phyto.gen %>% select(Year:Region,Genus:ActionPhase,BV.um3.per.L)
 
-## Format Flow Designation data frame for graphing
+## Create custom palette
+brewer.pal(n=8, name = "Set1")
+
+# Set folder name to output graphs into
+output <- "plots"
+
+## Combine EMP and FASTR datasets for Aulacosiera graphs
+phyto_gen_FASTR <- phyto.gen.BV %>% select(Year:Genus,BV.um3.per.L)
+phyto_gen_EMP <- phyto_gen_EMP %>% select(Year:Genus,BV.um3.per.L)
+
+# Add column identifying study
+phyto_gen_EMP <- phyto_gen_EMP %>% mutate(Study = "EMP")
+phyto_gen_FASTR <- phyto_gen_FASTR %>% mutate(Study = "FASTR")
+
+# Combine data frames
+phyto_combined <- bind_rows(phyto_gen_FASTR, phyto_gen_EMP)
+
+# Rename FASTR Regions
+phyto_combined$Region <- gsub("Downstream", "NDFA.Downstream", phyto_combined$Region)
+phyto_combined$Region <- gsub("Upstream", "NDFA.Upstream", phyto_combined$Region)
+
+# Remove bay stations and EZs and filter EMP data for FASTR years only
+phyto_combined <- phyto_combined %>%
+  filter(!Region %in% c("San.Pablo.Bay","Grizzly.and.Suisun.Bay","Entrapment.Zone")) %>%
+  filter(Year >= 2014 & Year <= 2019) 
+
+## Add Flow Designation to combined data frame
 # Remove Water Year Type and Flow Pulse Type data
 FlowDesignation <- FlowDesignation %>% select(Year:PostFlowEnd)
+
+phyto_combined <- inner_join(phyto_combined,FlowDesignation, by = "Year")   
+phyto_combined <- phyto_combined %>%
+  mutate(ActionPhase = ifelse(DateTime > PreFlowStart & DateTime < PreFlowEnd, "Before", NA)) %>%
+  mutate(ActionPhase = replace(ActionPhase, DateTime >= PreFlowEnd & DateTime < PostFlowStart, "During")) %>% ## added >= to avoid removing samples that fall on PreFlowEnd date
+  mutate(ActionPhase = replace(ActionPhase, DateTime >= PostFlowStart & DateTime < PostFlowEnd, "After")) %>% ## added >= to avoid removing samples that fall on PostFlowStart date
+  filter(!is.na(ActionPhase)) %>%
+  select(-c(PreFlowStart:PostFlowEnd))
+
+# Order the new ActionPhase so that it plots in the order Pre < During < Post
+phase.order <- c("Before","During","After")
+phyto_combined$ActionPhase <- factor(as.character(phyto_combined$ActionPhase), levels = phase.order)
+
+# Set year as factor for graphing
+phyto_combined$Year <- as.factor(phyto_combined$Year)
+  
+# Re-order stations from roughly North to South
+regions <- c("NDFA.Upstream", "NDFA.Downstream", "Northern.Interior.Delta",
+             "Confluence", "Central.Delta", "Southern.Interior.Delta")
+phyto_combined$Region <- factor(as.character(phyto_combined$Region), levels = regions)
+
+# Add zeros to non-detects
+temp <- pivot_wider(phyto_combined, 
+                    names_from = Genus,
+                    values_from = BV.um3.per.L,
+                    values_fill = 0)
+
+phyto_combined <- pivot_longer(temp,
+                             cols = Chlorella:last_col(),
+                             names_to = "Genus",
+                             values_to = "BV.um3.per.L")
+
+rm(temp)
+
+# Plot biovolume of Aulacoseira yearly at EMP and FASTR sites
+Aul.BV.year <- ggplot(data = subset(phyto_combined, Genus == "Aulacoseira"), 
+                      aes(x = Year, y = BV.um3.per.L)) +
+  geom_jitter(width = 0.1,
+              size = 2,
+              pch = 21, 
+              color = "black",
+              fill = "darkgreen") +
+  labs(x = "Year",
+       y = "Biovolume (um^3 per L)",
+       title = "Abundance of Aulacoseira Diatoms 2014 - 2019") +
+  scale_fill_brewer(palette = "Dark2")
+
+Aul.BV.year +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0)) +
+  facet_wrap(Region ~ ., ncol = 3) 
+
+ggsave(path = output,
+       filename = paste0("Aulacoseira_abundance_FASTR_EMP_yearly.pdf"), 
+       device = "pdf",
+       scale=1.0, 
+       units="in",
+       height=3.5,
+       width=6.5, 
+       dpi="print")
+
+# Plot biovolume of Aulacoseira monthly in 2016 only at EMP and FASTR sites
+Aul.BV.2016 <- ggplot(data = subset(phyto_combined, Genus == "Aulacoseira" & Year == 2016), 
+                      aes(x = ActionPhase, y = BV.um3.per.L)) +
+  geom_jitter(width = 0.1, 
+              size = 2,
+              pch = 21,
+              color = "black",
+              fill = "darkgreen") +
+  labs(x = "Pulse Period",
+       y = "Biovolume (um^3 per L)",
+       title = "Abundance of Aulacoseira Diatoms During Pulse Periods - 2016")
+
+Aul.BV.2016 +
+  facet_wrap(Region ~ ., ncol = 3)
+
+ggsave(path = output,
+       filename = paste0("Aulacoseira_abundance_FASTR_EMP_2016.pdf"), 
+       device = "pdf",
+       scale=1.0, 
+       units="in",
+       height=3.5,
+       width=6.5, 
+       dpi="print")
+
+`## Format Flow Designation data frame for graphing
 FlowDesignation <- pivot_longer(FlowDesignation, 
                                 cols = PreFlowStart:PostFlowEnd,
                                 names_to = "Phase",
@@ -42,30 +154,6 @@ FlowDesignation <- pivot_longer(FlowDesignation,
 
 FlowDesignation$Date <- as_datetime(FlowDesignation$Date,tz = "US/Pacific")
 
-## Create custom palette
-brewer.pal(n=8, name = "Set1")
-
-# Set folder name to output graphs into
-output <- "plots"
-
-Aul <- phyto.gen.BV %>% 
-  #filter(Year==2016) %>%
-  filter(Genus == "Aulacoseira")
-
-Aul$Year <- as.factor(Aul$Year)
-
-x <- ggplot(Aul, aes(x = Year, y = BV.um3.per.L, color = Year)) +
-  geom_jitter(width = 0.1) +
-  scale_color_brewer(palette = "Set1")
-
-x 
-#facet_wrap(StationCode ~ .)
-
-y <- ggplot(Aul, aes(x = Month, y = log10(BV.Density+1), color = StationCode)) +
-  geom_jitter(width = 0.1) 
-#scale_color_brewer(palette = "Set1")
-
-y
 
 ## Create pie chart showing overall distribution of taxa
 ## Plot general relative abundance for all data
