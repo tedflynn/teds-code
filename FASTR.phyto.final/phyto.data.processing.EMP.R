@@ -104,6 +104,21 @@ phyto <- phyto %>%
   mutate(Units.per.mL = UnitAbundance * Factor) %>%
   mutate(BV.um3.per.mL= TotalCells * BV.Avg * Factor)
 
+## Add column for year and month for highlighting data
+phyto <- phyto %>% mutate(Year = year(phyto$DateTime))
+
+phyto <- phyto %>% mutate(Month = month(phyto$DateTime, label = T))
+
+phyto$Year <- as.factor(phyto$Year)
+
+# Create data frame with average biovolume for Aulacosiera for FASTR data
+Aul.BV.avg.EMP <- phyto %>% 
+  filter(Genus == "Aulacoseira") %>%
+  select(DateTime:StationCode,Taxon:Genus,BV.Avg, Year, Month)
+
+ggplot(Aul.BV.avg.EMP, aes(x = Month, y = BV.Avg, color = Year)) +
+  geom_jitter(width = 0.1)
+
 ## Remove columns no longer needed
 phyto <- phyto %>% 
   select(!(Species:BV.Avg)) %>% 
