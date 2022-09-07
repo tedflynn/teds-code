@@ -16,7 +16,7 @@ theme_set(theme_bw())
 # Clean workspace
 rm(list=ls()) 
 
-# Import AEU data files
+# Import EMP data files
 phyto_files <- dir(path = "data/EMP/csv", pattern = "\\.csv", full.names = T)
 
 phyto_all <- map_dfr(phyto_files, ~read_csv(.x))
@@ -110,14 +110,6 @@ phyto <- phyto %>% mutate(Year = year(phyto$DateTime))
 phyto <- phyto %>% mutate(Month = month(phyto$DateTime, label = T))
 
 phyto$Year <- as.factor(phyto$Year)
-
-# Create data frame with average biovolume for Aulacosiera for FASTR data
-Aul.BV.avg.EMP <- phyto %>% 
-  filter(Genus == "Aulacoseira") %>%
-  select(DateTime:StationCode,Taxon:Genus,BV.Avg, Year, Month)
-
-ggplot(Aul.BV.avg.EMP, aes(x = Month, y = BV.Avg, color = Year)) +
-  geom_jitter(width = 0.1)
 
 ## Remove columns no longer needed
 phyto <- phyto %>% 

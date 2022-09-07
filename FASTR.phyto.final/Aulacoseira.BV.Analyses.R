@@ -15,28 +15,16 @@ theme_set(theme_bw())
 # Clean workspace
 rm(list=ls()) 
 
-# Import AEU data files (comment out when finished)
-phyto_files <- dir(path = "data/csv", pattern = "\\.csv", full.names = T)
-phyto.all <- map_dfr(phyto_files, ~read_csv(.x))
+# Import combined EMP & AEU data files 
+load("RData/df_phyto.RData")
 
-# Clean up column names
-phyto <- phyto.all %>%
-  clean_names(case = "big_camel")
+df_Aul <- df_phyto %>% filter(Genus == "Aulacoseira")
 
-phyto.Aul <- phyto %>% filter(Genus == "Aulacoseira")
-
-phyto.Aul$SampleDate <- mdy(phyto.Aul$SampleDate)
-
-phyto.Aul <- phyto.Aul %>%
-  mutate(Year = year(SampleDate))
-
-phyto.Aul$Year <- as.factor(phyto.Aul$Year)
-
-ggplot(phyto.Aul, aes(x = Year, y = Gald)) +
+ggplot(df_Aul, aes(x = Year, y = GALD)) +
   geom_jitter(width = 0.1)
 
-ggplot(phyto.Aul, aes(x = Year, y = Biovolume1)) +
+ggplot(df_Aul, aes(x = Year, y = BV.Avg)) +
   geom_jitter(width = 0.1)
 
-write_csv(phyto.Aul, file = "Aul.csv")
+
 

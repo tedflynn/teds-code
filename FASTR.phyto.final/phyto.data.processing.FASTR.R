@@ -182,17 +182,6 @@ phyto <- phyto %>%
 phyto <- phyto %>% 
   mutate(BM.ug.per.mL = Biomass.ug.C * Cells.per.mL)
 
-# Create data frame with average biovolume for Aulacosiera for FASTR data
-Aul.BV.avg.FASTR <- phyto %>% 
-  filter(Genus == "Aulacoseira") %>%
-  select(DateTime:StationCode,Taxon:Genus,BV.Avg)
-
-Aul.BV.avg.FASTR$Year <- as.factor(Aul.BV.avg.FASTR$Year)
-
-ggplot(Aul.BV.avg.FASTR, aes(x = StationCode, y = BV.Avg, color = Year)) +
-  geom_jitter(width = 0.1, size = 2) +
-  scale_color_brewer(palette = "Dark2")
-  
 ## Remove columns no longer needed
 phyto <- phyto %>% select(DateTime:StationCode,Taxon:Group,Units.per.mL:BM.ug.per.mL)
 
@@ -538,6 +527,6 @@ save(phyto.grp.BM, file = "RData/phyto.grp.BM.RData")
 save(phyto.grp.LCEFA, file = "RData/phyto.grp.LCEFA.RData")
 save(phyto.gen.NMDS, file = "RData/phyto.gen.NMDS.Rdata")
 save(phyto.grp.gen.BV.RA.tot, file = "RData/phyto.grp.gen.BV.RA.tot.Rdata")
-save(phyto.types, file = "RData/phyto.types")
+save(phyto.types, file = "RData/phyto.types.RData")
 
 write_csv(stresses, file = "analyses/NMDS_stress.csv")
