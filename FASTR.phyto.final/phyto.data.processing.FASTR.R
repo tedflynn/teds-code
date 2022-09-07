@@ -7,6 +7,7 @@ library("tidyverse");packageVersion("tidyverse")
 library("lubridate");packageVersion("lubridate")
 library("janitor");packageVersion("janitor")
 library("vegan");packageVersion("vegan")
+library("RColorBrewer");packageVersion("RColorBrewer")
 
 # Set working directory
 setwd("./FASTR.phyto.final/")
@@ -181,6 +182,17 @@ phyto <- phyto %>%
 phyto <- phyto %>% 
   mutate(BM.ug.per.mL = Biomass.ug.C * Cells.per.mL)
 
+# Create data frame with average biovolume for Aulacosiera for FASTR data
+Aul.BV.avg.FASTR <- phyto %>% 
+  filter(Genus == "Aulacoseira") %>%
+  select(DateTime:StationCode,Taxon:Genus,BV.Avg)
+
+Aul.BV.avg.FASTR$Year <- as.factor(Aul.BV.avg.FASTR$Year)
+
+ggplot(Aul.BV.avg.FASTR, aes(x = StationCode, y = BV.Avg, color = Year)) +
+  geom_jitter(width = 0.1, size = 2) +
+  scale_color_brewer(palette = "Dark2")
+  
 ## Remove columns no longer needed
 phyto <- phyto %>% select(DateTime:StationCode,Taxon:Group,Units.per.mL:BM.ug.per.mL)
 
