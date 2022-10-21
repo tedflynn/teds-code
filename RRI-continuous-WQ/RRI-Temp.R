@@ -3,8 +3,6 @@
 
 library(tidyverse)
 library(lubridate)
-library(timetk)
-library(cder)
 library(janitor)
 
 setwd("./RRI-continuous-WQ/")
