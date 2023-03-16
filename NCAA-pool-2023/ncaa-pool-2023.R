@@ -43,21 +43,51 @@ df_scores <- read_csv("ncaa-scores-2023.csv")
 
 df_hoops <- left_join(df_hoops,df_scores)
 
-# Score brackets
+# Set order for rounds
+round.order <- c("First Round",
+                 "Round of 32",
+                 "Sweet 16",
+                 "Elite Eight",
+                 "Final Four",
+                 "Title Game")
+
+df_hoops$Round <- factor(df_hoops$Round, level = round.order)
+
+# Check winners and score brackets
 df_hoops <- df_hoops %>%
-  mutate(Points.1 = case_when(Round == "First Round" & Pick == Winner ~ 1,
-                            TRUE ~ 0)) %>%
-  mutate(Points.2 = case_when(Round == "Round of 32" & Pick == Winner ~ 2,
-                            TRUE ~ 0)) %>%
-  mutate(Points.3 = case_when(Round == "Sweet Sixteen" & Pick == Winner ~ 4,
-                            TRUE ~ 0)) %>%
-  mutate(Points.4 = case_when(Round == "Elite Eight" & Pick == Winner ~ 8,
-                            TRUE ~ 0)) %>%
-  mutate(Points.5 = case_when(Round == "Final Four" & Pick == Winner ~ 16,
-                            TRUE ~ 0)) %>%
-  mutate(Points.6 = case_when(Round == "Title Game" & Pick == Winner ~ 32,
-                            TRUE ~ 0))
+  mutate(Result = case_when(Pick == Winner ~ 1, TRUE ~ 0)) %>%
+  mutate(Score = case_when(Round == "First Round" ~ Result * 1, 
+                           Round == "Round of 32" ~ Result * 2,
+                           Round == "Sweet 16" ~ Result * 4,
+                           Round == "Elite Eight" ~ Result * 8,
+                           Round == "Final Four" ~ Result * 16,
+                           Round == "Title Game" ~ Result * 32))
 
+df_table <- df_hoops %>%
+  group_by(Name, Round) %>%
+  summarize(Total = sum(Score)) %>%
+  ungroup()
 
+df_total <- df_hoops %>%
+  group_by(Name) %>%
+  summarize(Total = sum(Score)) %>%
+  ungroup()
 
+p_total <- ggplot(df_table, aes(x = reorder(Name, -Total), y = Total, fill = Round)) +
+  geom_col(width = 0.7) +
+  scale_fill_brewer(palette = "Set1")
 
+p_total +
+  labs(x = "Player Name",
+       y = "Total Points",
+       title = "NCAA Tournament Bracket Challenge - EMRR - 2023") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+ggsave(path = output,
+       filename = "NCAA_bracket_scores.png", 
+       device = "png",
+       scale=1.0, 
+       units="in",
+       height=4,
+       width=6, 
+       dpi="print")
