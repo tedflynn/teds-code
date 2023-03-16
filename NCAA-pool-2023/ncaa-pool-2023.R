@@ -73,15 +73,15 @@ df_total <- df_hoops %>%
   summarize(Total = sum(Score)) %>%
   ungroup()
 
-p_total <- ggplot(df_table, aes(x = reorder(Name, -Total), y = Total, fill = Round)) +
+p_total <- ggplot(df_table, aes(y = reorder(Name, Total), x = Total, fill = Round)) +
   geom_col(width = 0.7) +
   scale_fill_brewer(palette = "Set1")
 
 p_total +
   labs(x = "Player Name",
        y = "Total Points",
-       title = "NCAA Tournament Bracket Challenge - EMRR - 2023") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+       title = "NCAA Tournament Bracket Challenge - EMRR - 2023") 
+  #theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
 ggsave(path = output,
        filename = "NCAA_bracket_scores.png", 
