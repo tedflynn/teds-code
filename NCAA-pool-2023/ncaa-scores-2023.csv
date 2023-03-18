@@ -1,64 +1,64 @@
-﻿Round_ID,Round,Winner
-CHAMPION,Title Game,
-ER_R1A,First Round,
-ER_R1B,First Round,
-ER_R1C,First Round,
-ER_R1D,First Round,
-ER_R1E,First Round,
-ER_R1F,First Round,
-ER_R1G,First Round,
-ER_R1H,First Round,
-ER_R2A,Round of 32,
-ER_R2B,Round of 32,
-ER_R2C,Round of 32,
-ER_R2D,Round of 32,
-ER_R3A,Sweet 16,
-ER_R3B,Sweet 16,
-ER_R4,Elite Eight,
-FF_GAME1,Final Four,
-FF_GAME2,Final Four,
-MR_R1A,First Round,
-MR_R1B,First Round,
-MR_R1C,First Round,
-MR_R1D,First Round,
-MR_R1E,First Round,
-MR_R1F,First Round,
-MR_R1G,First Round,
-MR_R1H,First Round,
-MR_R2A,Round of 32,
-MR_R2B,Round of 32,
-MR_R2C,Round of 32,
-MR_R2D,Round of 32,
-MR_R3A,Sweet 16,
-MR_R3B,Sweet 16,
-MR_R4,Elite Eight,
-SR_R1A,First Round,
-SR_R1B,First Round,Maryland
-SR_R1C,First Round,SDSU
-SR_R1D,First Round,Furman
-SR_R1E,First Round,
-SR_R1F,First Round,
-SR_R1G,First Round,Missouri
-SR_R1H,First Round,Princeton
-SR_R2A,Round of 32,
-SR_R2B,Round of 32,
-SR_R2C,Round of 32,
-SR_R2D,Round of 32,
-SR_R3A,Sweet 16,
-SR_R3B,Sweet 16,
-SR_R4,Elite Eight,
-WR_R1A,First Round,Kansas
-WR_R1B,First Round,
-WR_R1C,First Round,
-WR_R1D,First Round,
-WR_R1E,First Round,
-WR_R1F,First Round,
-WR_R1G,First Round,
-WR_R1H,First Round,
-WR_R2A,Round of 32,
-WR_R2B,Round of 32,
-WR_R2C,Round of 32,
-WR_R2D,Round of 32,
-WR_R3A,Sweet 16,
-WR_R3B,Sweet 16,
-WR_R4,Elite Eight,
+﻿Round_ID,Round,Winner,Loser
+CHAMPION,Title Game,,
+ER_R1A,First Round,,
+ER_R1B,First Round,,
+ER_R1C,First Round,Duke,Oral Roberts
+ER_R1D,First Round,Tennessee,Louisiana
+ER_R1E,First Round,,
+ER_R1F,First Round,,
+ER_R1G,First Round,Michigan State,USC
+ER_R1H,First Round,Marquette,Vermont
+ER_R2A,Round of 32,,
+ER_R2B,Round of 32,,
+ER_R2C,Round of 32,,
+ER_R2D,Round of 32,,
+ER_R3A,Sweet 16,,
+ER_R3B,Sweet 16,,
+ER_R4,Elite Eight,,
+FF_GAME1,Final Four,,
+FF_GAME2,Final Four,,
+MR_R1A,First Round,Houston,Northern Kentucky
+MR_R1B,First Round,Auburn,Iowa
+MR_R1C,First Round,,
+MR_R1D,First Round,,
+MR_R1E,First Round,Pitt,Iowa State
+MR_R1F,First Round,Xavier,Kennesaw State
+MR_R1G,First Round,Penn State,Texas A&M
+MR_R1H,First Round,Texas,Colgate
+MR_R2A,Round of 32,,
+MR_R2B,Round of 32,,
+MR_R2C,Round of 32,,
+MR_R2D,Round of 32,,
+MR_R3A,Sweet 16,,
+MR_R3B,Sweet 16,,
+MR_R4,Elite Eight,,
+SR_R1A,First Round,Alabama,Texas A&M-CC
+SR_R1B,First Round,Maryland,West Virginia
+SR_R1C,First Round,SDSU,Charleston
+SR_R1D,First Round,Furman,Virginia
+SR_R1E,First Round,Creighton,NC State
+SR_R1F,First Round,Baylor,UCSB
+SR_R1G,First Round,Missouri,Utah State
+SR_R1H,First Round,Princeton,Arizona
+SR_R2A,Round of 32,,
+SR_R2B,Round of 32,,
+SR_R2C,Round of 32,,
+SR_R2D,Round of 32,,
+SR_R3A,Sweet 16,,
+SR_R3B,Sweet 16,,
+SR_R4,Elite Eight,,
+WR_R1A,First Round,Kansas,Howard
+WR_R1B,First Round,Arkansas,Illinois
+WR_R1C,First Round,Saint Mary's,VCU
+WR_R1D,First Round,Uconn,Iona
+WR_R1E,First Round,,
+WR_R1F,First Round,,
+WR_R1G,First Round,Northwestern,Boise State
+WR_R1H,First Round,UCLA,UNC Asheville
+WR_R2A,Round of 32,,
+WR_R2B,Round of 32,,
+WR_R2C,Round of 32,,
+WR_R2D,Round of 32,,
+WR_R3A,Sweet 16,,
+WR_R3B,Sweet 16,,
+WR_R4,Elite Eight,,

@@ -75,14 +75,14 @@ df_total <- df_hoops %>%
 
 p_total <- ggplot(df_table, aes(y = reorder(Name, Total), x = Total, fill = Round)) +
   geom_col(width = 0.7) +
+  scale_x_continuous(breaks = c(3,6,9,12)) +
   scale_fill_brewer(palette = "Set1")
 
 p_total +
-  labs(x = "Player Name",
-       y = "Total Points",
+  labs(x = "Total Points Scored",
+       y = NULL,
        title = "NCAA Tournament Bracket Challenge - EMRR - 2023") 
-  #theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-
+  
 ggsave(path = output,
        filename = "NCAA_bracket_scores.png", 
        device = "png",
