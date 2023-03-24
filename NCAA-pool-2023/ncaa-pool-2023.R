@@ -88,8 +88,8 @@ df_plot$Category <- gsub("Correct","Points Scored",df_plot$Category)
 
 # Plot Total Points and 
 p_totals <- ggplot(df_plot, aes(y = reorder(Name, Points), 
-                               x = Points, 
-                               fill = Category)) +
+                                x = Points, 
+                                fill = Category)) +
   geom_bar(width = 0.7,
            position = "dodge",
            stat = "summary", 
@@ -101,13 +101,33 @@ p_totals <- ggplot(df_plot, aes(y = reorder(Name, Points),
 p_totals +
   labs(x = "Total Points Scored",
        y = NULL,
-       title = "NCAA Tournament Challenge - EMRR - 2023 - Week 1") 
+       title = "NCAA Bracket Challenge 2023 - EMRR - Sweet 16, Day 1") 
 
 ggsave(path = output,
-       filename = "NCAA_bracket_scores.png", 
+       filename = "NCAA_bracket_scores_S16D1.png", 
        device = "png",
        scale=1.0, 
        units="in",
        height=4,
        width=6, 
        dpi="print")
+
+# Plot Points by Round
+df_score_by_round <- df_hoops %>%
+  group_by(Name, Round, Result) %>%
+  summarize(Points = sum(Points_Possible)) %>%
+  ungroup()
+
+df_score_by_round <- df_score_by_round %>%
+  filter(Result == "Correct")
+
+p_score_by_round <- ggplot(df_score_by_round, aes(x = Points,
+                                                  y = reorder(Name, Points),
+                                                  fill = Round)) +
+  geom_bar(width = 0.7,
+           position = "stack",
+           stat = "summary", 
+           fun = "sum") +
+  scale_fill_brewer(palette = "Set1")
+                             
+p_score_by_round
