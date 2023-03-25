@@ -72,7 +72,10 @@ df_tallies %>%
   group_by(Name) %>% 
   summarize(Total = sum(Points)) # all add up to 192
 
-df_plot <- pivot_wider(df_tallies, names_from = "Result", values_from = "Points")
+df_plot <- pivot_wider(df_tallies, 
+                       names_from = "Result", 
+                       values_from = "Points",
+                       values_fill = 0)
 
 df_plot <- df_plot %>%
   mutate(`Points Possible` = Correct + Points_Left)
@@ -80,14 +83,14 @@ df_plot <- df_plot %>%
 df_plot <- df_plot %>% select(Name:Correct,`Points Possible`)
 
 df_plot <- pivot_longer(df_plot, 
-                           names_to = "Category", 
-                           values_to = "Points",
-                           cols = Correct:`Points Possible`)
+                        names_to = "Category", 
+                        values_to = "Points",
+                        cols = Correct:`Points Possible`)
 
 df_plot$Category <- gsub("Correct","Points Scored",df_plot$Category)
 
 # Plot Total Points and 
-p_totals <- ggplot(df_plot, aes(y = reorder(Name, Points), 
+p_totals <- ggplot(df_plot, aes(y = reorder(Name, Points, sum), 
                                 x = Points, 
                                 fill = Category)) +
   geom_bar(width = 0.7,
@@ -122,7 +125,7 @@ df_score_by_round <- df_score_by_round %>%
   filter(Result == "Correct")
 
 p_score_by_round <- ggplot(df_score_by_round, aes(x = Points,
-                                                  y = reorder(Name, Points),
+                                                  y = reorder(Name, Points, sum),
                                                   fill = Round)) +
   geom_bar(width = 0.7,
            position = "stack",
