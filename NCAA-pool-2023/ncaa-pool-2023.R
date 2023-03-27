@@ -137,3 +137,12 @@ p_score_by_round +
   labs(x = "Total Points Scored",
        y = NULL,
        title = "NCAA Bracket Challenge 2023 - EMRR - Final") 
+
+ggsave(path = output,
+       filename = "NCAA_bracket_scores_final.png", 
+       device = "png",
+       scale=1.0, 
+       units="in",
+       height=4,
+       width=6, 
+       dpi="print")
