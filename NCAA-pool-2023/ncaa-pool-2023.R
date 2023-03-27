@@ -133,4 +133,7 @@ p_score_by_round <- ggplot(df_score_by_round, aes(x = Points,
            fun = "sum") +
   scale_fill_brewer(palette = "Set1")
                              
-p_score_by_round
+p_score_by_round +
+  labs(x = "Total Points Scored",
+       y = NULL,
+       title = "NCAA Bracket Challenge 2023 - EMRR - Final") 

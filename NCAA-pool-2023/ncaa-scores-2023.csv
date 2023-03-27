@@ -1,16 +1,16 @@
 ﻿Round_ID,Round,Winner,Loser
 ER_R3A,Sweet 16,FAU,Tennessee
 ER_R3B,Sweet 16,Kansas State,Michigan State
-MR_R3A,Sweet 16,,
-MR_R3B,Sweet 16,,
+MR_R3A,Sweet 16,Miami,Houston
+MR_R3B,Sweet 16,Texas,Xavier
 SR_R3A,Sweet 16,SDSU,Alabama
-SR_R3B,Sweet 16,,
+SR_R3B,Sweet 16,Creighton,Princeton
 WR_R3A,Sweet 16,UConn,Arkansas
 WR_R3B,Sweet 16,Gonzaga,UCLA
-ER_R4,Elite Eight,,
-MR_R4,Elite Eight,,
-SR_R4,Elite Eight,,
-WR_R4,Elite Eight,,
+ER_R4,Elite Eight,FAU,Kansas State
+MR_R4,Elite Eight,Miami,Texas
+SR_R4,Elite Eight,SDSU,Creighton
+WR_R4,Elite Eight,UConn,Gonzaga
 FF_GAME1,Final Four,,
 FF_GAME2,Final Four,,
 CHAMPION,Title Game,,
