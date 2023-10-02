@@ -1,0 +1,88 @@
+---
+title: "Elon Musk League 2023"
+author: "Ted Flynn"
+date: "2023-10-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(ggrepel)
+library(here)
+
+# Set output directory 
+output <- here("elon-musk-league",
+               "plots")
+
+# Set visual theme in ggplot
+theme_set(theme_bw())
+
+# Suppress summarise info
+options(tidyverse.quiet = TRUE)
+options(dplyr.summarise.inform = FALSE)
+```
+
+## Importing Data
+
+```{r import}
+df_auction <- read_csv(here("elon-musk-league","data","auction.csv"), 
+                            show_col_types = FALSE)
+
+df_auction$AuctionBid <- as.numeric(sub("\\$","", df_auction$AuctionBid))
+
+df_waivers <- read_csv(here("elon-musk-league","data","waivers.csv"), 
+                            show_col_types = FALSE)
+
+df_waivers$WaiverBid <- as.numeric(sub("\\$","", df_waivers$WaiverBid))
+
+
+```
+
+## Processing Data
+
+```{r processing, echo=FALSE}
+
+df_football <- left_join(df_waivers,df_auction)
+
+# Remove non-waiver claim
+df_football <- df_football %>% filter(!is.na(AuctionBid))
+
+# Calculate Bid Differential
+df_football <- df_football %>% 
+  mutate(Differential = WaiverBid - AuctionBid) %>% 
+  mutate(Class = case_when(Differential < 0 ~ "Cheaper",
+                           Differential == 0 ~ "Same",
+                           Differential > 0 ~ "Expensiver"))
+
+```
+
+```{r plot}
+
+p1 <- ggplot(df_football, aes(x = AuctionBid, y = WaiverBid, label = Player, color = Class)) +
+  geom_point(size = 3) +
+  geom_text_repel(color = "black", max.overlaps = 10) +
+  geom_segment(x = 0, y=0, xend=1000, yend=1000, color = "darkblue",
+               linetype = "dashed") +
+  scale_color_brewer(palette = "Set1")
+
+p1 + 
+  labs(x = "Auction Bid ($)",
+       y = "Waiver Bid ($)",
+       title = "Comparison of Auction and Waiver Amounts - Week 4 - 2023")
+  
+
+ggsave(path = output,
+       filename = "auction-vs-waivers-Week4.png", 
+       device = "png",
+       scale=1.0, 
+       units="in",
+       height=5,
+       width=7, 
+       dpi="print")
+
+```
+
