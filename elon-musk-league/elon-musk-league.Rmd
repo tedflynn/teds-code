@@ -39,6 +39,12 @@ df_waivers <- read_csv(here("elon-musk-league","data","waivers.csv"),
 
 df_waivers$WaiverBid <- as.numeric(sub("\\$","", df_waivers$WaiverBid))
 
+df_wk16 <- read_csv(here("elon-musk-league","data","Week16_long.csv"),
+                    show_col_types = FALSE)
+
+df_wk16 <- pivot_longer(df_wk16, values_to = "Points", names_to = "Week",
+                        cols = 3:18,
+                        values_drop_na = TRUE)
 
 ```
 
@@ -57,6 +63,14 @@ df_football <- df_football %>%
   mutate(Class = case_when(Differential < 0 ~ "Cheaper",
                            Differential == 0 ~ "Same",
                            Differential > 0 ~ "Expensiver"))
+
+# Filter out finalists
+finalists <- c("Jamie","Evan","Stephen","Ted","Rob")
+
+df_wk16_final <- df_wk16 %>% 
+  filter(Owner %in% finalists)
+
+
 
 ```
 
@@ -84,5 +98,24 @@ ggsave(path = output,
        width=7, 
        dpi="print")
 
+p2 <- ggplot(df_wk16_final, aes(x = Week, y = Points, color = Owner)) +
+  geom_line()
+  # geom_smooth(method = "loess",
+  #             se = FALSE,
+  #             span = 0.5)
+
+p2 + scale_color_brewer(palette = "Set1") +
+  labs(y = "Points",
+       x = "NFL Week",
+       title = "Weekly Points Above Minimum - EMI Finalists")
+  
+ggsave(path = output,
+       filename = "points-above-min-finalists-line.png", 
+       device = "png",
+       scale=1.0, 
+       units="in",
+       height=5,
+       width=7, 
+       dpi="print")
 ```
 
