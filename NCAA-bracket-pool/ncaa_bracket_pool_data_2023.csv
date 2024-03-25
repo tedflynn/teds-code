@@ -1,0 +1,64 @@
+﻿Round_ID,Andrew Tran,Vivian Klotz,Sonia Miller,Katey Rein,Ellen Preece,Shaun Philippart,Sarah Brown,Steve San Julian,Rosie Hartman,Lisa Vance,Michelle Nelson,GPT-4,Barack Obama,Snoop Dogg,Ted Flynn,Juan De La Torre,Melinda Baerwald,Scott Waller
+CHAMPION,Purdue,Alabama,Xavier,Alabama,Gonzaga,Arizona,Houston,Alabama,Maryland,UCSB,Kansas,Baylor,Duke,UCLA,Houston,Alabama,Purdue,Alabama
+ER_R1A,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue
+ER_R1B,Memphis,FAU,FAU,Memphis,FAU,Memphis,FAU,FAU,Florida,Memphis,Memphis,Memphis,Memphis,FAU,Memphis,Memphis,FAU,FAU
+ER_R1C,Duke,Duke,Oral Roberts,Duke,Oral Roberts,Duke,Duke,Duke,Duke,Duke,Duke,Duke,Duke,Duke,Duke,Oral Roberts,Duke,Duke
+ER_R1D,Tennessee,Tennessee,Tennessee,Louisiana,Tennessee,Tennessee,Tennessee,Louisiana,Tennessee,Louisiana,Tennessee,Tennessee,Tennessee,Tennessee,Louisiana,Tennessee,Tennessee,Tennessee
+ER_R1E,Providence,Kentucky,Kentucky,Kentucky,Kentucky,Kentucky,Kentucky,Kentucky,Kentucky,Providence,Providence,Kentucky,Kentucky,Kentucky,Kentucky,Providence,Kentucky,Providence
+ER_R1F,Kansas State,Kansas State,Kansas State,Montana State,Kansas State,Kansas State,Kansas State,Kansas State,Kansas State,Montana State,Kansas State,Kansas State,Kansas State,Kansas State,Kansas State,Kansas State,Kansas State,Kansas State
+ER_R1G,USC,Michigan State,USC,USC,Michigan State,Michigan State,USC,USC,Michigan State,USC,USC,USC,Michigan State,USC,USC,Michigan State,Michigan State,Michigan State
+ER_R1H,Marquette,Marquette,Marquette,Marquette,Marquette,Marquette,Marquette,Marquette,Marquette,Vermont,Vermont,Marquette,Marquette,Marquette,Marquette,Marquette,Marquette,Marquette
+ER_R2A,Purdue,Purdue,FAU,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Purdue,Memphis,Memphis,Prude,Purdue,Purdue,Purdue,Purdue
+ER_R2B,Tennessee,Tennessee,Tennessee,Duke,Oral Roberts,Duke,Duke,Duke,Duke,Duke,Tennessee,Duke,Duke,Duke,Duke,Tennessee,Duke,Tennessee
+ER_R2C,Kansas State,Kentucky,Kansas State,Kentucky,Kentucky,Kansas State,Kansas State,Kentucky,Kentucky,Providence,Kansas State,Kentucky,Kentucky,Kentucky,Kansas State,Kansas State,Kansas State,Providence
+ER_R2D,USC,Marquette,Marquette,USC,Marquette,Marquette,Marquette,Marquette,Michigan State,USC,USC,Marquette,Michigan State,USC,Marquette,Marquette,Michigan State,Marquette
+ER_R3A,Purdue,Tennessee,Tennessee,Duke,Purdue,Duke,Purdue,Purdue,Duke,Duke,Purdue,Duke,Duke,Duke,Purdue,Tennessee,Purdue,Tennessee
+ER_R3B,Kansas State,Kentucky,Marquette,USC,Kentucky,Marquette,Marquette,Marquette,Michigan State,USC,Kansas State,Marquette,Michigan State,USC,Kansas State,Kansas State,Kansas State,Marquette
+ER_R4,Purdue,Kentucky,Marquette,USC,Purdue,Marquette,Purdue,Marquette,Duke,USC,Kansas State,Duke,Duke,Duke,Purdue,Kansas State,Purdue,Marquette
+FF_GAME1,Arizona,Alabama,Alabama,Alabama,Arizona,Arizona,Alabama,Alabama,Maryland,UCSB,Creighton,Baylor,Duke,Alabama,Baylor,Alabama,Purdue,Alabama
+FF_GAME2,Purdue,Texas,Xavier,Houston,Gonzaga,Kansas,Houston,Kansas,UCLA,UCLA,Kansas,Texas,Houston,UCLA,Houston,Texas,Indiana,Texas
+MR_R1A,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston
+MR_R1B,Iowa,Iowa,Auburn,Iowa,Iowa,Auburn,Auburn,Iowa,Auburn,Iowa,Auburn,Auburn,Auburn,Iowa,Iowa,Iowa,Auburn,Auburn
+MR_R1C,Drake,Drake,Drake,Drake,Drake,Miami,Miami,Miama,Miami,Miami,Miami,Drake,Miami,Miami,Drake,Drake,Miami,Miami
+MR_R1D,Indiana,Indiana,Kent State,Indiana,Kent State,Indiana,Indiana,Indiana,Kent State,Indiana,Indiana,Indiana,Indiana,Indiana,Indiana,Indiana,Indiana,Kent State
+MR_R1E,Iowa State,Iowa State,Pitt,Iowa State,Pitt,Iowa State,Pitt,Iowa State,Iowa,Iowa State,Iowa State,Pitt,Pitt,Iowa State,Iowa State,Iowa State,Iowa State,Iowa State
+MR_R1F,Xavier,Xavier,Xavier,Xavier,Xavier,Xavier,Kennesaw State,Xavier,Kennesaw State,Xavier,Xavier,Xavier,Xavier,Xavier,Xavier,Xavier,Xavier,Xavier
+MR_R1G,Penn State,Penn State,Texas A&M,Penn State,Texas A&M,Penn State,Texas A&M,Texas A&M,Penn State,Texas A&M,Penn State,Penn State,Penn State,Penn State,Texas A&M,Texas A&M,Texas A&M,Texas A&M
+MR_R1H,Texas,Texas,Texas,Texas,Texas,Texas,Texas,Texas,Texas,Colgate,Texas,Texas,Texas,Texas,Texas,Texas,Texas,Texas
+MR_R2A,Iowa,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Houston
+MR_R2B,Indiana,Indiana,Kent State,Indiana,Drake,Maimi,Indiana,Indiana,Miami,Miami,Indiana,Indiana,Indiana,Miami,Drake,Indiana,Indiana,Miami
+MR_R2C,Iowa State,Iowa State,Xavier,Iowa State,Xavier,Xavier,Pitt,Xavier,Iowa,Iowa State,Iowa State,Xavier,,Iowa State,Iowa State,Xavier,Iowa State,Xavier
+MR_R2D,Texas,Texas,Texas,Texas,Texas A&M,Texas,Texas,Texas,Texas,Texas A&M,Texas,Texas,Texas,Texas,Texas A&M,Texas,Texas A&M,Texas
+MR_R3A,Iowa,Houston,Houston,Houston,Houston,Houston,Houston,Houston,Miami,Miami,Houston,Houston,Houston,Houston,Houston,Houston,Indiana,Houston
+MR_R3B,Iowa State,Texas,Xavier,Texas,Xavier,Texas,Texas,Texas,Texas,Texas A&M,Texas,Texas,Texas,Texas,Texas A&M,Texas,Iowa State,Texas
+MR_R4,Iowa,Texas,Xavier,Houston,Houston,Texas,Houston,Texas,Texas,Texas A&M,Texas,Texas,Houston,Houston,Houston,Texas,Indiana,Texas
+SR_R1A,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Texas A&M-CC,Texas A&M-CC,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama
+SR_R1B,West Virginia,West Virginia,Maryland,Maryland,West Virginia,West Virginia,Maryland,Maryland,Maryland,Maryland,West Virginia,Maryland,West Virginia,Maryland,West Virginia,Maryland,Maryland,Maryland
+SR_R1C,SDSU,SDSU,Charleston,Charleston,Charleston,Charleston,Charleston,Charleston,SDSU,SDSU,SDSU,SDSU,SDSU,SDSU,SDSU,SDSU,SDSU,SDSU
+SR_R1D,Furman,Virginia,Virginia,Virginia,Virginia,Virginia,Furman,Virginia,Virginia,Virginia,Virginia,Virginia,Virginia,Virginia,Furman,Virginia,Virginia,Virginia
+SR_R1E,NC State,Creighton,Creighton,Creighton,Creighton,Creighton,Creighton,Creighton,NC State,NC State,Creighton,NC State,NC State,Creighton,Creighton,Creighton,NC State,Creighton
+SR_R1F,Baylor,Baylor,Baylor,UCSB,Baylor,Baylor,Baylor,Baylor,UCSB,UCSB,Baylor,Baylor,Baylor,Baylor,Baylor,UCSB,Baylor,Baylor
+SR_R1G,Utah State,Utah State,Utah State,Utah State,Missouri,Utah State,Missouri,Utah State,Utah State,Utah State,Missouri,Utah State,Missouri,Missouri,Utah State,Utah State,Missouri,Utah State
+SR_R1H,Arizona,Arizona,Arizona,Arizona,Arizona,Arizona,Arizona,Arizona,Arizona,Arizona,Arizona,Arizona,Arizona,Arizona,Princeton,Arizona,Arizona,Arizona
+SR_R2A,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Maryland,Texas A&M-CC,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama
+SR_R2B,SDSU,SDSU,Charleston,Virginia,Charleston,UVA,Furman,Virginia,SDSU,SDSU,Virginia,SDSU,SDSU,SDSU,Furman,Virginia,Virginia,SDSU
+SR_R2C,NC State,Baylor,Creighton,Creighton,Creighton,Baylor,Baylor,Creighton,NC State,UCSB,Creighton,Baylor,Baylor,Creighton,Baylor,Creighton,Baylor,Baylor
+SR_R2D,Arizona,Arizona,Arizona,Utah State,Arizona,Arizona,Arizona,Arizona,Arizona,Utah State,Missouri,Arizona,Arizona,Arizona,Utah State,Arizona,Missouri,Arizona
+SR_R3A,SDSU,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Maryland,Texas A&M-CC,Virginia,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama,Alabama
+SR_R3B,Arizona,Baylor,Creighton,Creighton,Arizona,Arizona,Baylor,Arizona,NC State,UCSB,Creighton,Baylor,Baylor,Arizona,Baylor,Creighton,Missouri,Baylor
+SR_R4,Arizona,Alabama,Alabama,Alabama,Arizona,Arizona,Alabama,Alabama,Maryland,UCSB,Creighton,Baylor,Baylor,Alabama,Baylor,Alabama,Missouri,Alabama
+WR_R1A,Kansas,Kansas,Kansas,Howard,Kansas,Kansas,Kansas,Kansas,Howard,Kansas,Kansas,Kansas,Kansas,Kansas,Kansas,Kansas,Kansas,Kansas
+WR_R1B,Illinois,Arkansas,Arkansas,Illinois,Illinois,Arkansas,Illinois,Illinois,Illinois,Illinois,Arkansas,Illinois,Illinois,Illinois,Arkansas,Illinois,Illinois,Arkansas
+WR_R1C,Saint Mary's,VCU,Saint Mary's,Saint Mary's,VCU,Saint Mary's,Saint Mary's,VCU,Saint Mary's,Saint Mary's,Saint Mary's,VCU,VCU,VCU,VCU,Saint Mary's,Saint Mary's,Saint Mary's
+WR_R1D,UConn,UConn,Uconn,UConn,UConn,UConn,UConn,UConn,UConn,UConn,Iona,UConn,Iona,UConn,UConn,UConn,Iona,UConn
+WR_R1E,Arizona State,TCU,TCU,TCU,TCU,TCU,Arizona State,TCU,Arizona,TCU,Arizona State,Arizona State,TCU,TCU,TCU,Arizona State,Arizona State,Arizona State
+WR_R1F,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga
+WR_R1G,Boise State,Boise State,Northwestern,Northwestern,Boise State,Boise State,Boise State,Boise State,Northwestern,Northwetern,Boise State,Boise State,Boise State,Northwestern,Boise State,Northwestern,Northwestern,Boise State
+WR_R1H,UCLA,UCLA,UCLA,UNC Asheville,UCLA,UCLA,UNC Asheville,UCLA,UCLA,UCLA,UCLA,UCLA,UCLA,UCLA,UCLA,UCLA,UCLA,UCLA
+WR_R2A,Kansas,Kansas,Kansas,Howard,Kansas,Kansas,Kansas,Kansas,Howard,Illinois,Kansas,Kansas,Kansas,Kansas,Kansas,Kansas,Kansas,Kansas
+WR_R2B,UConn,UConn,Saint Mary's,Saint Mary's,VCU,Saint Mary's,UConn,VCU,UConn,Saint Mary's,Saint Mary's,Connecticut,Iona,UConn,UConn,Saint Mary's,Iona,UConn
+WR_R2C,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,Gonzaga,TCU,Gonzaga,TCU,Gonzaga,Gonzaga,TCU,Gonzaga,Gonzaga,Gonzaga,Arizona State,Gonzaga
+WR_R2D,UCLA,UCLA,UCLA,Northwestern,UCLA,UCLA,Boise State,UCLA,UCLA,UCLA,UCLA,UCLA,UCLA,UCLA,UCLA,UCLA,UCLA,UCLA
+WR_R3A,Kansas,UConn,Kansas,Howard,Kansas,Kansas,Kansas,Kansas,UConn,Illinois,Kansas,Kansas,Kansas,Kansas,Kansas,Kansas,Kansas,UConn
+WR_R3B,Gonzaga,UCLA,Gonzaga,Northwestern,Gonzaga ,UCLA,Gonzaga,TCU,UCLA,UCLA,Gonzaga,Gonzaga,UCLA,UCLA,Gonzaga,UCLA,UCLA,UCLA
+WR_R4,Kansas,UCLA,Kansas,Howard,Gonzaga,Kansas,Gonzaga,Kansas,UCLA,UCLA,Kansas,Gonzaga,UCLA,UCLA,Gonzaga,UCLA,UCLA,UConn
