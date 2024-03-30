@@ -2,7 +2,7 @@
 title: "NMDS Demo"
 author: "Ted Flynn"
 date: "2024-03-29"
-output: html_document
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -31,9 +31,10 @@ df_phyto_FASTR_gen_BV <- df_phyto_FASTR_gen_BV %>%
 
 ```
 
-##
+## Multivariate Calculations
+This stage of the script uses the [vegan] package to process the biovolume data in order to generate the NMDS plots. It saves the stress of each configuration to a .CSV file. 
 
-```{r process data}
+```{r process data, message=FALSE, fig.show='hide'}
 
 # Use set.seed to make distance matrix calculations reproducible
 set.seed(2390)
@@ -57,11 +58,12 @@ for (i in 1:length(years)) {
     filter(Year == years[i])
   
   # Calculate the nMDS using vegan 
-  phyto.NMDS <- metaMDS(comm = genw[c(7:139)],
+  capture.output(phyto.NMDS <- metaMDS(comm = genw[c(7:139)],
                         distance = "bray",
                         k = 3,
-                        trymax = 500
-  )
+                        trymax = 500,
+                        wascores=FALSE
+  ), file = NULL)
   
   stresses$stress[which(stresses$Year == years[i])] <- phyto.NMDS$stress
   
@@ -95,7 +97,7 @@ write_csv(stresses, file = here("NMDS-demo","NMDS_stress.csv"))
 
 You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
+```{r pressure, message=FALSE}
 
 # Set location to save plots
 plots <- here("NMDS-demo")
@@ -128,15 +130,6 @@ p_NMDS_region +
   facet_wrap(Year ~ ., ncol = 3, dir = "h") +
   scale_fill_brewer(palette = "Set1") +
   scale_color_brewer(palette = "Set1")
-
-ggsave(path = plots,
-       filename = "phyto_NMDS_by_region.png", 
-       device = "png",
-       scale=1.0, 
-       units="in",
-       height=4.5,
-       width=5.5, 
-       dpi="print")
 
 ```
 
