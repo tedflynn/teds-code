@@ -5,9 +5,6 @@ library(readxl)
 library(RColorBrewer)
 library(here)
 
-# Set directory for storing plots
-output <- here("ncaa-bracket-pool","2024","plots")
-
 # Set visual theme in ggplot
 theme_set(theme_bw())
 
@@ -62,7 +59,8 @@ df_hoops <- df_hoops %>%
   mutate(Result = case_when(Pick == Winner ~ "Correct",
                             Pick %in% Loser ~ "Incorrect",
                             #is.na(Winner) ~ "Not Played",
-                            TRUE ~ "Points_Left"))
+                            TRUE ~ "Incorrect"))
+                            #TRUE ~ "Points_Left"))
 
 df_tallies <- df_hoops %>%
   group_by(Name, Result) %>%
@@ -79,6 +77,8 @@ df_plot <- pivot_wider(df_tallies,
                        values_from = "Points",
                        values_fill = 0)
 
+# Use when NCAA Tourney is Ongoing ---------------------------------------------
+
 df_plot <- df_plot %>%
   mutate(`Points Possible` = Correct + Points_Left)
 
@@ -91,7 +91,18 @@ df_plot <- pivot_longer(df_plot,
 
 df_plot$Category <- gsub("Correct","Points Scored",df_plot$Category)
 
-# Plot Total Points and 
+# Use when NCAA Tourney is Complete --------------------------------------------
+df_plot <- df_plot %>% 
+  rename("Points" = "Correct") %>% 
+  select(!Incorrect)
+
+# Plot Total Points and Points Left --------------------------------------------
+
+# Set directory for storing plots
+output <- here("ncaa-bracket-pool","2024","plots")
+
+# Plot for use during tournament -----------------------------------------------
+
 p_totals <- ggplot(df_plot, aes(y = reorder(Name, Points, sum), 
                                 x = Points, 
                                 fill = Category)) +
@@ -110,6 +121,32 @@ p_totals +
 
 ggsave(path = output,
        filename = "NCAA_bracket_scores_R1D2.png", 
+       device = "png",
+       scale=1.0, 
+       units="in",
+       height=4,
+       width=6, 
+       dpi="print")
+
+# Plot for use after tournament is finished-------------------------------------
+p_final <- ggplot(df_plot, aes(y = reorder(Name, Points, sum),
+                               x = Points)) +
+  geom_bar(width = 0.7,
+           position = "dodge",
+           stat = "summary", 
+           fun = "sum",
+           fill = "darkblue") 
+  #geom_point(data = subset(df_plot, Category == "Points_Possible"), size = 4) +
+  #scale_x_continuous(breaks = c(3,6,9,12)) +
+  #scale_fill_manual(values = c("darkblue"))
+
+p_final +
+  labs(x = "Total Points Scored",
+       y = NULL,
+       title = "EMRR NCAA Men's Bracket Challenge 2024 - Final") 
+
+ggsave(path = output,
+       filename = "NCAA_bracket_scores_m_final.png", 
        device = "png",
        scale=1.0, 
        units="in",
