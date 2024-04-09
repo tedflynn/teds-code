@@ -1,0 +1,64 @@
+﻿Round_ID,Round,Winner,Loser
+A1R-R1-G1,First Round,South Carolina,Presbyterian
+A1R-R1-G2,First Round,North Carolina,Michigan St.
+A1R-R1-G3,First Round,Oklahoma,FGCU
+A1R-R1-G4,First Round,Indiana,Fairfield
+A1R-R1-G5,First Round,Nebraska,Texas A&M
+A1R-R1-G6,First Round,Oregon St.,Eastern Wash.
+A1R-R1-G7,First Round,Ole Miss,Marquette
+A1R-R1-G8,First Round,Notre Dame,Kent St.
+A1R-R2-G1,Round of 32,South Carolina,North Carolina
+A1R-R2-G2,Round of 32,Indiana,Oklahoma
+A1R-R2-G3,Round of 32,Oregon St.,Nebraska
+A1R-R2-G4,Round of 32,Notre Dame,Ole Miss
+A1R-R3-G1,Sweet 16,South Carolina,Indiana
+A1R-R3-G2,Sweet 16,Oregon St.,Notre Dame
+A1R-R4-Final,Elite Eight,South Carolina,Oregon St.
+A2R-R1-G1,First Round,Iowa,Holy Cross
+A2R-R1-G2,First Round,West Virginia,Princeton
+A2R-R1-G3,First Round,Colorado,Drake
+A2R-R1-G4,First Round,Kansas St.,Portland
+A2R-R1-G5,First Round,Middle Tenn.,Louisville
+A2R-R1-G6,First Round,LSU,Rice
+A2R-R1-G7,First Round,Creighton,UNLV
+A2R-R1-G8,First Round,UCLA,California Baptist
+A2R-R2-G1,Round of 32,Iowa,West Virginia
+A2R-R2-G2,Round of 32,Colorado,Kansas St.
+A2R-R2-G3,Round of 32,LSU,Middle Tenn.
+A2R-R2-G4,Round of 32,UCLA,Creighton
+A2R-R3-G1,Sweet 16,Iowa,Colorado
+A2R-R3-G2,Sweet 16,LSU,UCLA
+A2R-R4-Final,Elite Eight,Iowa,LSU
+P1R-R1-G1,First Round,Texas,Drexel
+P1R-R1-G2,First Round,Alabama,Florida St.
+P1R-R1-G3,First Round,Utah,South Dakota St.
+P1R-R1-G4,First Round,Gonzaga,UC Irvine
+P1R-R1-G5,First Round,Tennessee,Green Bay
+P1R-R1-G6,First Round,NC State,Chattanooga
+P1R-R1-G7,First Round,Iowa St.,Maryland
+P1R-R1-G8,First Round,Stanford,Norfolk
+P1R-R2-G1,Round of 32,Texas,Alabama
+P1R-R2-G2,Round of 32,Gonzaga,Utah
+P1R-R2-G3,Round of 32,NC State,Tennessee
+P1R-R2-G4,Round of 32,Stanford,Iowa St.
+P1R-R3-G1,Sweet 16,Texas,Gonzaga
+P1R-R3-G2,Sweet 16,NC State,Stanford
+P1R-R4-Final,Elite Eight,NC State,Texas
+P2R-R1-G1,First Round,Southern California,Texas A&M-Corpus Christi
+P2R-R1-G2,First Round,Kansas,Michigan
+P2R-R1-G3,First Round,Baylor,Vanderbilt
+P2R-R1-G4,First Round,Virginia Tech,Marshall
+P2R-R1-G5,First Round,Syracuse,Arizona
+P2R-R1-G6,First Round,UConn,Jackson St.
+P2R-R1-G7,First Round,Duke,Richmond
+P2R-R1-G8,First Round,Ohio St.,Maine
+P2R-R2-G1,Round of 32,Southern California,Kansas
+P2R-R2-G2,Round of 32,Baylor,Virginia Tech
+P2R-R2-G3,Round of 32,UConn,Syracuse
+P2R-R2-G4,Round of 32,Duke,Ohio St.
+P2R-R3-G1,Sweet 16,Southern California,Baylor
+P2R-R3-G2,Sweet 16,UConn,Duke
+P2R-R4-Final,Elite Eight,UConn,Southern California
+FF-R1-Semi1,Final Four,South Carolina,NC State
+FF-R1-Semi2,Final Four,Iowa,UConn
+FF-R2-Final,Title Game,South Carolina,Iowa
