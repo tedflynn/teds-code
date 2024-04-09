@@ -1,0 +1,64 @@
+﻿Round_ID,Round,Winner,Loser
+E-R1-G1,First Round,UConn,Stetson
+E-R1-G2,First Round,Northwestern,FAU
+E-R1-G3,First Round,San Diego St,UAB
+E-R1-G4,First Round,Yale,Auburn
+E-R1-G5,First Round,Duquesne,BYU
+E-R1-G6,First Round,Illinois,Morehead St.
+E-R1-G7,First Round,Washington St.,Drake
+E-R1-G8,First Round,Iowa St.,South Dakota St.
+E-R2-G1,Round of 32,UConn,Northwestern
+E-R2-G2,Round of 32,San Diego St,Yale
+E-R2-G3,Round of 32,Illinois,Duquesne
+E-R2-G4,Round of 32,Iowa St.,Washington St.
+E-R3-G1,Sweet 16,UConn,San Diego St
+E-R3-G2,Sweet 16,Illinois,Iowa St.
+E-R4-Final,Elite Eight,UConn,Illinois
+M-R1-G1,First Round,Purdue,Grambling St.
+M-R1-G2,First Round,Utah State,TCU
+M-R1-G3,First Round,Gonzaga,McNeese St.
+M-R1-G4,First Round,Kansas,Samford
+M-R1-G5,First Round,Oregon,South Carolina
+M-R1-G6,First Round,Creighton,Akron
+M-R1-G7,First Round,Texas,Colorado St.
+M-R1-G8,First Round,Tennessee,St. Peter's
+M-R2-G1,Round of 32,Purdue,Utah State
+M-R2-G2,Round of 32,Gonzaga,Kansas
+M-R2-G3,Round of 32,Oregon,Creighton
+M-R2-G4,Round of 32,Tennessee,Texas
+M-R3-G1,Sweet 16,Purdue,Gonzaga
+M-R3-G2,Sweet 16,Tennessee,Creighton
+M-R4-Final,Elite Eight,Purdue,Tennessee
+S-R1-G1,First Round,Houston,Longwood
+S-R1-G2,First Round,Texas A&M,Nebraska
+S-R1-G3,First Round,James Madison,Wisconsin
+S-R1-G4,First Round,Duke,Vermont
+S-R1-G5,First Round,NC State,Texas Tech
+S-R1-G6,First Round,Oakland,Kentucky
+S-R1-G7,First Round,Colorado,Florida
+S-R1-G8,First Round,Marquette,Western Kentucky
+S-R2-G1,Round of 32,Houston,Texas A&M
+S-R2-G2,Round of 32,Duke,James Madison
+S-R2-G3,Round of 32,NC State,Oakland
+S-R2-G4,Round of 32,Marquette,Colorado
+S-R3-G1,Sweet 16,Duke,Houston
+S-R3-G2,Sweet 16,NC State,Marquette
+S-R4-Final,Elite Eight,NC State,Duke
+W-R1-G1,First Round,North Carolina,Wagner
+W-R1-G2,First Round,Michigan St.,Mississippi St.
+W-R1-G3,First Round,Grand Canyon,St. Mary's
+W-R1-G4,First Round,Alabama,Charleston
+W-R1-G5,First Round,Clemson,New Mexico
+W-R1-G6,First Round,Baylor,Colgate
+W-R1-G7,First Round,Dayton,Nevada
+W-R1-G8,First Round,Arizona,Long Beach
+W-R2-G1,Round of 32,North Carolina,Michigan St.
+W-R2-G2,Round of 32,Alabama,Grand Canyon
+W-R2-G3,Round of 32,Clemson,Baylor
+W-R2-G4,Round of 32,Arizona,Dayton
+W-R3-G1,Sweet 16,Alabama,North Carolina
+W-R3-G2,Sweet 16,Clemson,Arizona
+W-R4-Final,Elite Eight,Alabama,Clemson
+FF - R1 - Semi 1,Final Four,UConn,Alabama
+FF - R1 - Semi 2,Final Four,Purdue,NC State
+FF - R2 - Final,Title Game,UConn,Purdue
