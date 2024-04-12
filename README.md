@@ -1,2 +1,2 @@
 # teds-code
-Repository for 
+Repository for personal projects. 
